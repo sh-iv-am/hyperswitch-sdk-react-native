@@ -23,7 +23,11 @@ import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import com.facebook.react.shell.MainReactPackage
+import com.horcrux.svg.SvgPackage
 import com.hyperswitchreactnative.internal.DefaultReactHost.getDefaultReactHost
+import com.hyperswitchsdkreactnative.HyperswitchSdkReactNativePackage
+import com.proyecto26.inappbrowser.RNInAppBrowserPackage
+import io.sentry.react.RNSentryPackage
 
 /**
  * Fragment for creating a React View. This allows the developer to "embed" a React Application
@@ -77,7 +81,13 @@ internal open class ReactFragment : Fragment(), PermissionAwareActivity {
   protected open val reactNativeHost: ReactNativeHost?
     get() = // (activity?.application as ReactApplication?)?.reactNativeHost
       object : DefaultReactNativeHost(requireActivity().application) {
-        override fun getPackages(): List<ReactPackage> = listOf(MainReactPackage())
+        override fun getPackages(): List<ReactPackage> = listOf(
+          MainReactPackage(),
+          HyperswitchSdkReactNativePackage(),
+          RNSentryPackage(),
+          RNInAppBrowserPackage(),
+          SvgPackage()
+        )
 //          PackageList(this).packages.apply {
 //            // Packages that cannot be autolinked yet can be added manually here, for example:
 //            // add(MyReactNativePackage())

@@ -19,9 +19,17 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
   override fun launchPaymentSheet() {
     val activity = currentActivity as? FragmentActivity
     activity?.let {
+      val bundle = Bundle().apply {
+        putBundle("props", Bundle().apply {
+          putString("type", "payment")
+          putString("publishableKey", "")
+          putString("clientSecret", "")
+        })
+      }
+
       val reactFragment = ReactFragment.Builder()
-        .setComponentName("hyperswitch")
-        .setLaunchOptions(Bundle())
+        .setComponentName("hyperSwitch")
+        .setLaunchOptions(bundle)
         .build()
 
       val fragmentManager: FragmentManager = it.supportFragmentManager

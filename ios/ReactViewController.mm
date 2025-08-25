@@ -9,8 +9,16 @@
     [(ReactNativeDelegate *)self.reactNativeFactoryDelegate setDependencyProvider:[[RCTAppDependencyProvider alloc] init]];
     
     self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:self.reactNativeFactoryDelegate];
+  
+    NSDictionary *props = @{
+        @"props": @{
+            @"type": @"payment",
+            @"publishableKey": @"",
+            @"clientSecret": @""
+        }
+    };
     
-    self.view = [self.reactNativeFactory.rootViewFactory viewWithModuleName:@"hyperswitch"];
+    self.view = [self.reactNativeFactory.rootViewFactory viewWithModuleName:@"hyperSwitch" initialProperties:props];
 }
 
 @end

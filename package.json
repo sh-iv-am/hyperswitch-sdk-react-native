@@ -85,8 +85,11 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
+    "@sentry/react-native": "*",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-inappbrowser-reborn": "*",
+    "react-native-svg": "*"
   },
   "workspaces": [
     "example"

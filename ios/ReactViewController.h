@@ -1,6 +1,6 @@
 #import <React/RCTBundleURLProvider.h>
-#import <RCTReactNativeFactory.h>
-#import <RCTDefaultReactNativeFactoryDelegate.h>
+#import "RCTReactNativeFactory.h"
+#import "RCTDefaultReactNativeFactoryDelegate.h"
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 
 @interface ReactViewController : UIViewController

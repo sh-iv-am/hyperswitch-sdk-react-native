@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.hyperswitchreactnative.internal
+package com.hyperswitchsdkreactnative.internal
 
 import android.app.Activity
 import android.content.Intent
@@ -25,7 +25,10 @@ import com.facebook.react.modules.core.PermissionListener
 import com.facebook.react.shell.MainReactPackage
 import com.horcrux.svg.SvgPackage
 import com.hyperswitchreactnative.internal.DefaultReactHost.getDefaultReactHost
+import com.hyperswitchreactnative.internal.DefaultReactNativeHost
 import com.hyperswitchsdkreactnative.HyperswitchSdkReactNativePackage
+import com.hyperswitchsdkreactnative.hypermodules.HyperNativeModule
+import com.hyperswitchsdkreactnative.hypermodules.HyperNativePackage
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage
 import io.sentry.react.RNSentryPackage
 
@@ -33,7 +36,7 @@ import io.sentry.react.RNSentryPackage
  * Fragment for creating a React View. This allows the developer to "embed" a React Application
  * inside native components such as a Drawer, ViewPager, etc.
  */
-internal open class ReactFragment : Fragment(), PermissionAwareActivity {
+open class ReactFragment : Fragment(), PermissionAwareActivity {
   protected lateinit var reactDelegate: ReactDelegate
   private var disableHostLifecycleEvents = false
   private var permissionListener: PermissionListener? = null
@@ -58,12 +61,12 @@ internal open class ReactFragment : Fragment(), PermissionAwareActivity {
         } else {
           @Suppress("DEPRECATION")
           (ReactDelegate(
-        requireActivity(),
-        reactNativeHost,
-        mainComponentName,
-        launchOptions,
-        fabricEnabled,
-    ))
+            requireActivity(),
+            reactNativeHost,
+            mainComponentName,
+            launchOptions,
+            fabricEnabled,
+          ))
         }
   }
 
@@ -111,7 +114,24 @@ internal open class ReactFragment : Fragment(), PermissionAwareActivity {
    */
   protected open val reactHost: ReactHost?
     get() = //(activity?.application as ReactApplication?)?.reactHost
-      getDefaultReactHost(requireContext(), reactNativeHost!!)
+      getDefaultReactHost(
+        requireContext(),
+        listOf(
+          MainReactPackage(),
+          HyperswitchSdkReactNativePackage(),
+          RNSentryPackage(),
+          RNInAppBrowserPackage(),
+          SvgPackage(),
+          HyperNativePackage()
+        ),
+//        com.facebook.react.HyperPackageList(requireActivity().application, requireContext()).packages,
+        "index",
+        "hyperswitch.bundle",
+        null,
+        null,
+        false,
+        emptyList(),
+      )
 
   override fun onCreateView(
       inflater: LayoutInflater,

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.hyperswitchreactnative.internal
+package com.hyperswitchsdkreactnative.internal
 
 import android.app.Activity
 import android.content.Intent
@@ -30,7 +30,7 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
  * an [Activity] or a [android.app.Fragment].
  */
 @Suppress("DEPRECATION")
-internal open class ReactDelegate {
+open class ReactDelegate {
   private val activity: Activity
   private var internalReactRootView: ReactRootView? = null
   private val mainComponentName: String?

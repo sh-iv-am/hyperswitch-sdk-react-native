@@ -32,6 +32,10 @@
     "!**/.*"
   ],
   "scripts": {
+    "re:start": "rescript build -w",
+    "re:format": "rescript format -all",
+    "re:build": "rescript",
+    "re:clean": "rescript clean",
     "example": "yarn workspace hyperswitch-sdk-react-native-example",
     "test": "jest",
     "typecheck": "tsc",
@@ -68,6 +72,8 @@
     "@react-native/babel-preset": "0.79.2",
     "@react-native/eslint-config": "^0.78.0",
     "@release-it/conventional-changelog": "^9.0.2",
+    "@rescript/core": "^1.6.1",
+    "@rescript/react": "^0.14.0",
     "@types/jest": "^29.5.5",
     "@types/react": "^19.0.0",
     "commitlint": "^19.6.1",
@@ -81,6 +87,8 @@
     "react-native": "0.79.2",
     "react-native-builder-bob": "^0.40.8",
     "release-it": "^17.10.0",
+    "rescript": "11",
+    "rescript-react-native": "^0.78.0",
     "turbo": "^1.10.7",
     "typescript": "^5.8.3"
   },

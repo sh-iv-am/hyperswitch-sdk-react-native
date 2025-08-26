@@ -54,15 +54,21 @@ export default function Screen({}: {}) {
     let res = await presentPaymentSheet(
       {
         ...(paymentSheetParams as sessionParams),
+        locale : "en",
+        configuration :{
+          appearance : {
+            locale : "en"
+          }
+        }
       },
     );
     console.log('presentPaymentSheet result', typeof res);
-    if (res.status === "success") {
+    if (res.status === "success" || res.status === "succeeded") {
       setStatus('Payment Successful');
     } else if (res.status == "cancelled") {
       setStatus('Payment Canceled');
     }else{
-        setStatus('Payment Failed: ' + res);
+        setStatus('Payment Failed: ' + JSON.stringify(res));
     }
 
     // Launch the payment sheet

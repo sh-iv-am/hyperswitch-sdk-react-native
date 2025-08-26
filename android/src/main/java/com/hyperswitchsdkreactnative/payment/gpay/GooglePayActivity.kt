@@ -1,15 +1,14 @@
 package com.hyperswitchsdkreactnative.payment.gpay
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.react.bridge.Arguments
-//import com.google.android.gms.pay.PayClient
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.PaymentData
-import com.hyperswitchsdkreactnative.HyperswitchSdkReactNativeModule.Companion.googlePayCallback
+import com.hyperswitchsdkreactnative.payment.gpay.GooglePayCallbackManager.getCallback
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -21,6 +20,7 @@ class GooglePayActivity : AppCompatActivity() {
     private val model: GooglePayViewModel by viewModels()
 
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = intent
@@ -54,22 +54,23 @@ class GooglePayActivity : AppCompatActivity() {
         AutoResolveHelper.resolveTask(task, this, gPayRequestCode)
     }
 
-    private fun handlePaymentSuccess(paymentData: PaymentData) {
-        val map = Arguments.createMap()
-        try {
-            val paymentInformation = paymentData.toJson()
-            map.putString("paymentMethodData", JSONObject(paymentInformation).toString())
-        } catch (error: JSONException) {
-            map.putString("error", error.message)
-        }
-        googlePayCallback.invoke(map)
-        finish()
+  private fun handlePaymentSuccess(paymentData: PaymentData) {
+    // Use MutableMap for dynamic data
+    val map: MutableMap<String, Any?> = mutableMapOf()
+    try {
+      val paymentInformation = paymentData.toJson()
+      map["paymentMethodData"] = JSONObject(paymentInformation).toString()
+    } catch (error: JSONException) {
+      map["error"] = error.message
     }
+    getCallback()?.invoke(map)
+    finish()
+  }
 
     private fun handleError(message: String) {
-        val map = Arguments.createMap()
-        map.putString("error", message)
-        googlePayCallback.invoke(map)
+      val map: MutableMap<String, Any?> = mutableMapOf()
+        map["error"]  =  message
+        getCallback()?.invoke(map)
         finish()
     }
 

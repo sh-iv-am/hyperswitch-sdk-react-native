@@ -10,6 +10,7 @@ import com.facebook.react.bridge.Arguments
 import com.hyperswitchsdkreactnative.HyperswitchSdkReactNativeModule
 import com.hyperswitchsdkreactnative.NativeHyperModulesSpec
 import com.hyperswitchsdkreactnative.react.ReactUtils
+import com.hyperswitchsdkreactnative.payment.gpay.GooglePayCallbackManager
 
 /**
  * HyperModules TurboModule implementation that bridges the bundle's expectations
@@ -51,7 +52,26 @@ class HyperNativeModule(reactContext: ReactApplicationContext) :
   override fun launchGPay(requestObj: String, callback: Callback) {
     Log.d(NAME, "launchGPay called")
     // Implementation for Google Pay
-    callback.invoke("Google Pay not implemented")
+//    callback.invoke("Google Pay not implemented")
+
+
+    currentActivity?.let {
+      GooglePayCallbackManager.setCallback(
+        it,
+        requestObj,
+        fun(data: Map<String, Any?>) {
+          callback.invoke(Arguments.fromBundle(ReactUtils.toBundle(data)))
+        },
+      )
+    } ?: run {
+      GooglePayCallbackManager.setCallback(
+        reactApplicationContext,
+        requestObj,
+        fun(data: Map<String, Any?>) {
+          callback.invoke(Arguments.fromBundle(ReactUtils.toBundle(data)))
+        },
+      )
+    }
   }
 
   @ReactMethod

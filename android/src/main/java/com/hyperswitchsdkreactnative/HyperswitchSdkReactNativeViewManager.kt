@@ -10,17 +10,16 @@ import com.facebook.react.viewmanagers.HyperswitchSdkReactNativeViewManagerInter
 import com.facebook.react.viewmanagers.HyperswitchSdkReactNativeViewManagerDelegate
 
 @ReactModule(name = HyperswitchSdkReactNativeViewManager.NAME)
-class HyperswitchSdkReactNativeViewManager : SimpleViewManager<HyperswitchSdkReactNativeView>() {
-//  HyperswitchSdkReactNativeViewManagerInterface<HyperswitchSdkReactNativeView> {
-//  private val mDelegate: ViewManagerDelegate<HyperswitchSdkReactNativeView>
+class HyperswitchSdkReactNativeViewManager : SimpleViewManager<HyperswitchSdkReactNativeView>(),
+  HyperswitchSdkReactNativeViewManagerInterface<HyperswitchSdkReactNativeView> {
+  private val mDelegate: ViewManagerDelegate<HyperswitchSdkReactNativeView>
 
   init {
-//    mDelegate = HyperswitchSdkReactNativeViewManagerDelegate(this)
+    mDelegate = HyperswitchSdkReactNativeViewManagerDelegate(this)
   }
 
   override fun getDelegate(): ViewManagerDelegate<HyperswitchSdkReactNativeView>? {
-//    return mDelegate
-    return null
+    return mDelegate
   }
 
   override fun getName(): String {
@@ -32,7 +31,7 @@ class HyperswitchSdkReactNativeViewManager : SimpleViewManager<HyperswitchSdkRea
   }
 
   @ReactProp(name = "color")
-  fun setColor(view: HyperswitchSdkReactNativeView?, color: String?) {
+  override fun setColor(view: HyperswitchSdkReactNativeView?, color: String?) {
     view?.setBackgroundColor(Color.parseColor(color))
   }
 

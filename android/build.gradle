@@ -77,10 +77,10 @@ def kotlin_version = getExtOrDefault("kotlinVersion")
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.google.android.gms:play-services-wallet:19.2.1"
+  implementation "com.google.android.gms:play-services-wallet:19.4.0"
   implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2"
   implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.9.2"
-  implementation "androidx.activity:activity-ktx:1.6.1"
+  implementation "androidx.activity:activity-ktx:1.10.1"
   implementation project(":react-native-inappbrowser-reborn")
   implementation project(":react-native-svg")
   implementation project(":sentry_react-native")

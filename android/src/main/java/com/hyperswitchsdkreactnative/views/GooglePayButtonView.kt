@@ -10,6 +10,7 @@ import com.google.android.gms.wallet.button.ButtonConstants
 import com.google.android.gms.wallet.button.ButtonOptions
 import com.google.android.gms.wallet.button.PayButton
 
+@SuppressLint("ViewConstructor")
 class GooglePayButtonView(private val context: ThemedReactContext) : FrameLayout(context) {
 
   lateinit var allowedPaymentMethods: String

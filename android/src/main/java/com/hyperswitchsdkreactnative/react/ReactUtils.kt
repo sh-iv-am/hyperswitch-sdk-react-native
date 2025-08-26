@@ -52,7 +52,8 @@ class ReactUtils {
                 userAgent,
                 ipAddress
               )
-            ).build()
+            ).setFabricEnabled(true)
+            .build()
           val transaction = context.supportFragmentManager.beginTransaction()
           if (isHidden == true) {
             transaction.hide(reactNativeFragmentSheet!!)
@@ -119,6 +120,23 @@ class ReactUtils {
       if (reset) {
         reactNativeFragmentSheet = null
       }
+    }
+
+    fun toBundle(readableMap: Map<*, *>): Bundle {
+      val bundle = Bundle()
+      for ((key, value) in readableMap) {
+        val keyString = key.toString()
+        when (value) {
+          null -> {} //bundle.putString(keyString, null)
+          is Boolean -> bundle.putBoolean(keyString, value)
+          is Number -> bundle.putDouble(keyString, value.toDouble())
+          is String -> bundle.putString(keyString, value)
+          is Map<*, *> -> bundle.putBundle(keyString, toBundle(value))
+          is Array<*> -> bundle.putSerializable(keyString, value as? Array<*>)
+          else -> throw IllegalArgumentException("Could not convert object with key: $keyString.")
+        }
+      }
+      return bundle
     }
 
     private fun getLaunchOptions(

@@ -1,5 +1,6 @@
 package com.hyperswitchsdkreactnative
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -149,6 +150,7 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = "HyperswitchSDKReactNative"
 
+    @SuppressLint("StaticFieldLeak")
     @JvmStatic
     lateinit var paymentSession: PaymentSession
 
@@ -170,7 +172,7 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
       try {
         sheetPromise.resolve(result)
       } catch (e: Exception) {
-        Log.e("HyperswitchSDK", "Error resolving payment sheet promise", e)
+        Log.e("HyperSwitchSDK", "Error resolving payment sheet promise", e)
       }
     }
 
@@ -178,7 +180,7 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
       try {
         sheetPromise.reject(code, message)
       } catch (e: Exception) {
-        Log.e("HyperswitchSDK", "Error rejecting payment sheet promise", e)
+        Log.e("HyperSwitchSDK", "Error rejecting payment sheet promise", e)
       }
     }
 

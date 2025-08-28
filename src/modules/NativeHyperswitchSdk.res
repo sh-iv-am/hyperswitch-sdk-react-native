@@ -13,6 +13,9 @@ type initPaymentSessionParams = {paymentIntentClientSecret?: string}
 @genType
 type initPaymentSessionResult = {error?: string}
 
+@genType
+type presentPaymentSheetParams = PaymentSheetConfiguration.options
+
 type status =
   | @as("Completed") Completed
   | @as("Canceled") Canceled
@@ -25,7 +28,7 @@ type presentPaymentSheetResult = {
 }
 
 @genType
-type presentPaymentSheet = unit => promise<presentPaymentSheetResult>
+type presentPaymentSheet = presentPaymentSheetParams => promise<presentPaymentSheetResult>
 
 type nativeHyperswitchSdk = {
   initialise: initialise,

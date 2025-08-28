@@ -4,6 +4,7 @@ import {
   useHyper,
   type InitPaymentSessionParams,
   type InitPaymentSessionResult,
+  type PresentPaymentSheetParams,
   type PresentPaymentSheetResult,
 } from 'hyperswitch-sdk-react-native';
 
@@ -66,7 +67,14 @@ export default function PaymentScreen() {
 
   const checkout = async (): Promise<void> => {
     try {
-      const result: PresentPaymentSheetResult = await presentPaymentSheet();
+      const options: PresentPaymentSheetParams = {
+        appearance: {
+          theme: 'Dark',
+        },
+      };
+
+      const result: PresentPaymentSheetResult =
+        await presentPaymentSheet(options);
 
       if (result.error) {
         console.error('Payment failed:', result.error);

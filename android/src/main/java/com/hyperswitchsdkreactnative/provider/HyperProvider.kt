@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.hyperswitchsdkreactnative.internal.ReactFragment
 import org.json.JSONObject
@@ -38,13 +39,14 @@ internal class HyperProvider internal constructor(private val activity: Activity
     this.clientSecret = clientSecret
   }
 
-  fun presentPaymentSheet(callback: (PaymentResult) -> Unit) {
+  fun presentPaymentSheet(readableMap: ReadableMap,callback: (PaymentResult) -> Unit) {
     val activity = activity as? FragmentActivity
     activity?.let {
       val propsBundle = Bundle().apply {
         putString("type", "payment")
         putString("publishableKey", publishableKey ?: "")
         putString("clientSecret", clientSecret ?: "")
+        putBundle("configuration", Arguments.toBundle(readableMap))
         customBackendUrl?.let { url -> putString("customBackendUrl", url) }
         customLogUrl?.let { url -> putString("customLogUrl", url) }
         customParams?.let { params -> putString("customParams", JSONObject(params.toHashMap()).toString()) }

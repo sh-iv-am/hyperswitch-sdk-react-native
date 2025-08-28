@@ -23,4 +23,7 @@ typedef void (^PaymentResultCallback)(PaymentResult *result);
 
 - (void)presentPaymentSheetWithCallback:(PaymentResultCallback)callback;
 
+- (void)presentPaymentSheetWithConfiguration:(nullable NSDictionary *)configuration
+                                    callback:(PaymentResultCallback)callback;
+
 @end

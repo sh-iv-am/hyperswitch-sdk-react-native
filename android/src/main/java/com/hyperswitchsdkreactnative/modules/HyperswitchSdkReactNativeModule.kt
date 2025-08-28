@@ -52,10 +52,10 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  override fun presentPaymentSheet(promise: Promise?) {
+  override fun presentPaymentSheet(readableMap: ReadableMap, promise: Promise?) {
     try {
       hyperProvider?.let { provider ->
-        provider.presentPaymentSheet { result ->
+        provider.presentPaymentSheet(readableMap) { result ->
           when (result.status) {
             "completed" -> {
               val resultMap: WritableMap = WritableNativeMap().apply {

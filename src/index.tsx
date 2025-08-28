@@ -2,6 +2,7 @@ export type { props as HyperProviderProps } from './context/HyperProvider.gen';
 export type {
   initPaymentSessionParams as InitPaymentSessionParams,
   initPaymentSessionResult as InitPaymentSessionResult,
+  presentPaymentSheetParams as PresentPaymentSheetParams,
   presentPaymentSheetResult as PresentPaymentSheetResult,
 } from './modules/NativeHyperswitchSdk.gen';
 

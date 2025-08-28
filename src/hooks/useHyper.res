@@ -24,9 +24,9 @@ let _initPaymentSession = async (params: initPaymentSessionParams): initPaymentS
   }
 }
 
-let _presentPaymentSheet = async (): presentPaymentSheetResult => {
+let _presentPaymentSheet = async (params: presentPaymentSheetParams): presentPaymentSheetResult => {
   try {
-    let result = await nativeHyperswitchSdk.presentPaymentSheet()
+    let result = await nativeHyperswitchSdk.presentPaymentSheet(params)
     result
   } catch {
   | Exn.Error(obj) =>
@@ -40,7 +40,7 @@ let _presentPaymentSheet = async (): presentPaymentSheetResult => {
 
 type useHyper = {
   initPaymentSession: initPaymentSessionParams => promise<initPaymentSessionResult>,
-  presentPaymentSheet: unit => promise<presentPaymentSheetResult>,
+  presentPaymentSheet: presentPaymentSheetParams => promise<presentPaymentSheetResult>,
 }
 
 @genType
@@ -52,14 +52,14 @@ let useHyper = () => {
     _initPaymentSession(params)
   })
 
-  let presentPaymentSheet = React.useCallback1(() => {
+  let presentPaymentSheet = React.useCallback1((params: presentPaymentSheetParams) => {
     if !isReady {
       let a: promise<presentPaymentSheetResult> = Promise.resolve(
         getError(~error="Hyperswitch is not initialized"),
       )
       a
     } else {
-      _presentPaymentSheet()
+      _presentPaymentSheet(params)
     }
   }, [isReady])
 

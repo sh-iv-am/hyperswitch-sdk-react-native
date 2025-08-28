@@ -9,7 +9,7 @@ export interface Spec extends TurboModule {
     customParams: undefined | Object
   ): Promise<void>;
   initPaymentSession(paymentIntentClientSecret: string): Promise<void>;
-  presentPaymentSheet(): Promise<Object>;
+  presentPaymentSheet(configuration: Object): Promise<Object>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(

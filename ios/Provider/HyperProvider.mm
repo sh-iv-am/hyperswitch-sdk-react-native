@@ -49,6 +49,11 @@
 }
 
 - (void)presentPaymentSheetWithCallback:(PaymentResultCallback)callback {
+    [self presentPaymentSheetWithConfiguration:nil callback:callback];
+}
+
+- (void)presentPaymentSheetWithConfiguration:(NSDictionary *)configuration
+                                    callback:(PaymentResultCallback)callback {
     self.paymentCallback = callback;
     
     if (!self.viewController) {
@@ -62,7 +67,8 @@
     NSMutableDictionary *props = [@{
         @"type": @"payment",
         @"publishableKey": self.publishableKey ?: @"",
-        @"clientSecret": self.clientSecret ?: @""
+        @"clientSecret": self.clientSecret ?: @"",
+        @"configuration": configuration
     } mutableCopy];
     
     if (self.customBackendUrl) {
@@ -74,14 +80,7 @@
     }
     
     if (self.customParams) {
-        NSError *error;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self.customParams
-                                                           options:0
-                                                             error:&error];
-        if (!error && jsonData) {
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            props[@"customParams"] = jsonString;
-        }
+        props[@"customParams"] = self.customParams;
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{

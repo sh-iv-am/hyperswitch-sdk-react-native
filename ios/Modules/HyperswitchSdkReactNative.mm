@@ -43,11 +43,13 @@ RCT_EXPORT_MODULE()
     }
 }
 
-- (void)presentPaymentSheet:(RCTPromiseResolveBlock)resolve
+- (void)presentPaymentSheet:(NSDictionary *)configuration
+                    resolve:(RCTPromiseResolveBlock)resolve
                      reject:(RCTPromiseRejectBlock)reject {
     
     if (self.hyperProvider) {
-        [self.hyperProvider presentPaymentSheetWithCallback:^(PaymentResult *result) {
+        [self.hyperProvider presentPaymentSheetWithConfiguration:configuration
+                                                         callback:^(PaymentResult *result) {
             if ([result.status isEqualToString:@"completed"]) {
                 NSDictionary *resultDict = @{
                     @"status": result.status,

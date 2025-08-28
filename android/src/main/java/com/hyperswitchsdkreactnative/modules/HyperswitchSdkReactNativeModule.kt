@@ -40,8 +40,6 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
   }
 
   override fun initPaymentSession(paymentIntentClientSecret: String, promise: Promise?) {
-    println(">>>>>>>>>>>>>>>>>>>>>>")
-    println(paymentIntentClientSecret)
     try {
       hyperProvider?.let { provider ->
         provider.initPaymentSession(clientSecret = paymentIntentClientSecret)

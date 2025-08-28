@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.hyperswitchreactnative.internal
+package com.hyperswitchsdkreactnative.internal
 
 import android.app.Activity
 import android.content.Intent
@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.facebook.react.HyperPackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
@@ -22,12 +23,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
-import com.facebook.react.shell.MainReactPackage
-import com.horcrux.svg.SvgPackage
-import com.hyperswitchreactnative.internal.DefaultReactHost.getDefaultReactHost
-import com.hyperswitchsdkreactnative.HyperswitchSdkReactNativePackage
-import com.proyecto26.inappbrowser.RNInAppBrowserPackage
-import io.sentry.react.RNSentryPackage
+import com.hyperswitchsdkreactnative.internal.DefaultReactHost.getDefaultReactHost
 
 /**
  * Fragment for creating a React View. This allows the developer to "embed" a React Application
@@ -81,17 +77,11 @@ internal open class ReactFragment : Fragment(), PermissionAwareActivity {
   protected open val reactNativeHost: ReactNativeHost?
     get() = // (activity?.application as ReactApplication?)?.reactNativeHost
       object : DefaultReactNativeHost(requireActivity().application) {
-        override fun getPackages(): List<ReactPackage> = listOf(
-          MainReactPackage(),
-          HyperswitchSdkReactNativePackage(),
-          RNSentryPackage(),
-          RNInAppBrowserPackage(),
-          SvgPackage()
-        )
-//          PackageList(this).packages.apply {
-//            // Packages that cannot be autolinked yet can be added manually here, for example:
-//            // add(MyReactNativePackage())
-//          }
+        override fun getPackages(): List<ReactPackage> =
+          HyperPackageList(this).packages.apply {
+            // Packages that cannot be autolinked yet can be added manually here, for example:
+            // add(MyReactNativePackage())
+          }
 
         override fun getJSMainModuleName(): String = "index"
         override fun getBundleAssetName(): String = "hyperswitch.bundle"
@@ -110,8 +100,7 @@ internal open class ReactFragment : Fragment(), PermissionAwareActivity {
    * a Bridgeless-only concept.
    */
   protected open val reactHost: ReactHost?
-    get() = //(activity?.application as ReactApplication?)?.reactHost
-      getDefaultReactHost(requireContext(), reactNativeHost!!)
+    get() = getDefaultReactHost(requireContext(), reactNativeHost!!)
 
   override fun onCreateView(
       inflater: LayoutInflater,

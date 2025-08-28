@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.hyperswitchreactnative.internal
+package com.hyperswitchsdkreactnative.internal
 
 import android.app.Activity
 import android.content.Intent

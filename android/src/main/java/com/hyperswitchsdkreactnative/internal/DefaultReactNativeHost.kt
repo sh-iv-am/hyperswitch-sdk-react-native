@@ -7,7 +7,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package com.hyperswitchreactnative.internal
+package com.hyperswitchsdkreactnative.internal
 
 import android.app.Application
 import android.content.Context

@@ -7,7 +7,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package com.hyperswitchreactnative.internal
+package com.hyperswitchsdkreactnative.internal
 
 import android.content.Context
 import com.facebook.react.ReactHost

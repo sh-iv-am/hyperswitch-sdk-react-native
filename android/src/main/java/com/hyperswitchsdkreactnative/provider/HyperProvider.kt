@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.bridge.ReadableMap
-import com.hyperswitchreactnative.internal.ReactFragment
+import com.hyperswitchsdkreactnative.internal.ReactFragment
 import org.json.JSONObject
 
 data class PaymentResult(

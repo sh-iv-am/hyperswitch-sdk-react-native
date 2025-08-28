@@ -6,36 +6,34 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkNativeModule
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeViewManager
+import com.hyperswitchsdkreactnative.views.GooglePayButtonViewManager
 import java.util.ArrayList
-import java.util.HashMap
 
 class HyperswitchSdkReactNativePackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-    return if (name == HyperswitchSdkReactNativeModule.NAME) {
-      HyperswitchSdkReactNativeModule(reactContext)
-    } else {
-      null
+    return when (name) {
+      HyperswitchSdkReactNativeModule.NAME -> HyperswitchSdkReactNativeModule(reactContext)
+      HyperswitchSdkNativeModule.NAME -> HyperswitchSdkNativeModule(reactContext)
+      else -> null
     }
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
     viewManagers.add(HyperswitchSdkReactNativeViewManager())
+    viewManagers.add(GooglePayButtonViewManager())
     return viewManagers
   }
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
     return ReactModuleInfoProvider {
-      val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-      moduleInfos[HyperswitchSdkReactNativeModule.NAME] = ReactModuleInfo(
-        HyperswitchSdkReactNativeModule.NAME,
-        HyperswitchSdkReactNativeModule.NAME,
-        false,  // canOverrideExistingModule
-        false,  // needsEagerInit
-        false,  // isCxxModule
-        true // isTurboModule
-      )
-      moduleInfos
+      arrayOf(HyperswitchSdkReactNativeModule.NAME, HyperswitchSdkNativeModule.NAME)
+        .associateWith {
+          ReactModuleInfo(it, it, false, false, false, true)
+        }.toMutableMap()
     }
   }
 }

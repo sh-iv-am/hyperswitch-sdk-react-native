@@ -2,7 +2,16 @@ import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
 export interface Spec extends TurboModule {
-  launchPaymentSheet(): void;
+  initialise(
+    publishableKey: string,
+    customBackendUrl: undefined | string,
+    customLogUrl: undefined | string,
+    customParams: undefined | Object
+  ): Promise<void>;
+  initPaymentSession(paymentIntentClientSecret: string): Promise<void>;
+  presentPaymentSheet(): Promise<Object>;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('HyperswitchSdkReactNative');
+export default TurboModuleRegistry.getEnforcing<Spec>(
+  'HyperswitchSdkReactNative'
+);

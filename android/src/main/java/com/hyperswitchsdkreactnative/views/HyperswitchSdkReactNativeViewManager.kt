@@ -1,4 +1,4 @@
-package com.hyperswitchsdkreactnative
+package com.hyperswitchsdkreactnative.modules
 
 import android.graphics.Color
 import com.facebook.react.module.annotations.ReactModule

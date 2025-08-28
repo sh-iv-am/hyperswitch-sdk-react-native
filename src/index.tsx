@@ -1,6 +1,12 @@
-import HyperswitchSdkReactNative from './specs/NativeHyperswitchSdkReactNative';
-export { default as HyperswitchReactNativeView } from './specs/HyperswitchSdkReactNativeViewNativeComponent';
+export type { props as HyperProviderProps } from './context/HyperProvider.gen';
+export type {
+  initPaymentSessionParams as InitPaymentSessionParams,
+  initPaymentSessionResult as InitPaymentSessionResult,
+  presentPaymentSheetResult as PresentPaymentSheetResult,
+} from './modules/NativeHyperswitchSdk.gen';
 
-export function launchPaymentSheet(): void {
-  return HyperswitchSdkReactNative.launchPaymentSheet();
-}
+export {
+  make as HyperProvider,
+  initHyperswitch,
+} from './context/HyperProvider.gen';
+export { useHyper } from './hooks/useHyper.gen';

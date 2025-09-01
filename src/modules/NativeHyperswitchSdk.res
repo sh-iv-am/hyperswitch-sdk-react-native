@@ -1,17 +1,25 @@
+type initialiseResult = {
+  isready?: bool,
+  error?: string,
+  status?: string,
+  message?: string,
+  code?: string,
+}
+
 type initialise = (
   ~publishableKey: string,
   ~customBackendUrl: string=?,
   ~customLogUrl: string=?,
   ~customParams: Js.Json.t=?,
-) => promise<unit>
+) => promise<initialiseResult>
 
-type initPaymentSession = (~paymentIntentClientSecret: string) => promise<unit>
+type initPaymentSession = (~paymentIntentClientSecret: string) => promise<initialiseResult>
 
 @genType
 type initPaymentSessionParams = {paymentIntentClientSecret?: string}
 
 @genType
-type initPaymentSessionResult = {error?: string}
+type initPaymentSessionResult = initialiseResult
 
 @genType
 type presentPaymentSheetParams = PaymentSheetConfiguration.options
@@ -25,6 +33,7 @@ type presentPaymentSheetResult = {
   status: status,
   message: string,
   error?: string,
+  \"type"?: string,
 }
 
 @genType

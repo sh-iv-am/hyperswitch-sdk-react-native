@@ -1,4 +1,5 @@
 #import "ReactViewController.h"
+#import "../Views/ApplePayView.h"
 
 @implementation ReactViewController
 
@@ -14,7 +15,6 @@
     [super viewDidLoad];
     
     self.reactNativeFactoryDelegate = [[ReactNativeDelegate alloc] init];
-    [(ReactNativeDelegate *)self.reactNativeFactoryDelegate setDependencyProvider:[[RCTAppDependencyProvider alloc] init]];
     
     self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:self.reactNativeFactoryDelegate];
     
@@ -53,8 +53,27 @@
     return [self bundleURL];
 }
 
+- (BOOL)useDeveloperSupport:(RCTReactNativeFactory *)factory {
+    return NO;
+}
+
 - (NSURL *)bundleURL {
-    return [[NSBundle mainBundle] URLForResource:@"hyperswitch" withExtension:@"bundle"];
+    // First try to load from the main bundle (for development)
+    NSURL *bundleURL = [[NSBundle mainBundle] URLForResource:@"hyperswitch" withExtension:@"bundle"];
+    
+    if (!bundleURL) {
+        // If not found in main bundle, try to load from the HyperswitchSdkReactNative bundle
+        NSBundle *hyperswitchBundle = [NSBundle bundleForClass:[self class]];
+        bundleURL = [hyperswitchBundle URLForResource:@"hyperswitch" withExtension:@"bundle"];
+    }
+    
+    if (!bundleURL) {
+        NSLog(@"ReactViewController: Could not find hyperswitch.bundle");
+    } else {
+        NSLog(@"ReactViewController: Found hyperswitch.bundle at: %@", bundleURL);
+    }
+    
+    return bundleURL;
 }
 
 @end

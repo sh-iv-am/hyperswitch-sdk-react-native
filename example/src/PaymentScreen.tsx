@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Button, Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Button, Platform, StyleSheet, Text } from 'react-native';
 import {
   useHyper,
   type InitPaymentSessionParams,
@@ -10,13 +10,13 @@ import {
 
 export default function PaymentScreen() {
   const { initPaymentSession, presentPaymentSheet } = useHyper();
-
+  const [status, setStatus] = useState<string | null | undefined>(null);
   const createPaymentIntent = async (): Promise<string> => {
     try {
       const baseUrl =
         Platform.OS === 'android'
-          ? 'http://10.0.2.2:3000'
-          : 'http://localhost:3000';
+          ? 'http://10.0.2.2:5252'
+          : 'http://localhost:5252';
       const response = await fetch(`${baseUrl}/create-payment-intent`, {
         method: 'POST',
         headers: {
@@ -56,6 +56,8 @@ export default function PaymentScreen() {
 
         if (result.error) {
           console.error('Payment session initialization failed:', result.error);
+        }else{
+          setStatus("")
         }
       } catch (error) {
         console.error('Setup failed:', error);
@@ -77,12 +79,15 @@ export default function PaymentScreen() {
         await presentPaymentSheet(options);
 
       if (result.error) {
-        console.error('Payment failed:', result.error);
+        console.error('Payment failed:', JSON.stringify(result.error));
+        setStatus(`Payment failed: ${JSON.stringify(result.error)}`);
       } else {
+        setStatus(result.status);
         console.log('Payment completed with status:', result.status);
         console.log('Message:', result.message);
       }
-    } catch (error) {
+    } catch (error : any) {
+      setStatus(`Checkout failed: ${JSON.stringify(error.message)}`);
       console.error('Checkout failed:', error);
     }
   };
@@ -90,6 +95,7 @@ export default function PaymentScreen() {
   return (
     <View style={styles.container}>
       <Button title="Checkout" onPress={checkout} />
+      <Text style={styles.statusText}>{status}</Text>
     </View>
   );
 }
@@ -100,5 +106,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
+  },
+  statusText: {
+    marginTop: 16,
+    fontSize: 24,
+    color: 'gray',
+    textAlign: 'center',
   },
 });

@@ -9,11 +9,11 @@ let getError: (~error: string=?) => presentPaymentSheetResult = (
 }
 
 let _initPaymentSession = async (params: initPaymentSessionParams): initPaymentSessionResult => {
+  
   try {
     await nativeHyperswitchSdk.initPaymentSession(
       ~paymentIntentClientSecret=params.paymentIntentClientSecret->Option.getOr(""),
     )
-    {}
   } catch {
   | Exn.Error(obj) =>
     switch Exn.message(obj) {
@@ -49,7 +49,7 @@ let useHyper = () => {
   let isReady = contextData.isInitialized && contextData.error->Belt.Option.isNone
 
   let initPaymentSession = React.useCallback0((params: initPaymentSessionParams) => {
-    _initPaymentSession(params)
+     _initPaymentSession(params)
   })
 
   let presentPaymentSheet = React.useCallback1((params: presentPaymentSheetParams) => {

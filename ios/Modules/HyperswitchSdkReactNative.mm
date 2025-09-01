@@ -1,12 +1,38 @@
 #import "HyperswitchSdkReactNative.h"
 #import "HyperProvider.h"
+#import "RCTUtils.h"
 
 @interface HyperswitchSdkReactNative ()
 @property (nonatomic, strong, nullable) HyperProvider *hyperProvider;
+@property (nonatomic, copy, nullable) RCTPromiseResolveBlock presentPaymentSheetResolver;
+@property (nonatomic, copy, nullable) RCTPromiseRejectBlock presentPaymentSheetRejecter;
 @end
 
 @implementation HyperswitchSdkReactNative
 RCT_EXPORT_MODULE()
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        // Listen for payment sheet exit notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handlePaymentSheetExit:)
+                                                     name:@"HyperPaymentSheetExit"
+                                                   object:nil];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)handlePaymentSheetExit:(NSNotification *)notification {
+    NSDictionary *result = notification.userInfo;
+    if (result) {
+        [self exitPaymentSheet:result];
+    }
+}
 
 - (void)initialise:(NSString *)publishableKey
   customBackendUrl:(nullable NSString *)customBackendUrl
@@ -17,6 +43,7 @@ RCT_EXPORT_MODULE()
     
     dispatch_async(dispatch_get_main_queue(), ^{
         UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+//      UIViewController *rootViewController = RCTPresentedViewController();
         
         if (rootViewController) {
             self.hyperProvider = [[HyperProvider alloc] initWithViewController:rootViewController];
@@ -24,7 +51,12 @@ RCT_EXPORT_MODULE()
                                              customBackendUrl:customBackendUrl
                                                 customLogUrl:customLogUrl
                                                 customParams:customParams];
-            resolve([NSNull null]);
+            resolve(@{
+                @"status": @"success",
+                @"isready": @YES,
+                @"code": @"",
+                @"message": @"HyperProvider initialized successfully"
+            });
         } else {
             reject(@"INITIALIZATION_ERROR", @"Root view controller is nil", nil);
         }
@@ -37,7 +69,12 @@ RCT_EXPORT_MODULE()
     
     if (self.hyperProvider) {
         [self.hyperProvider initPaymentSessionWithClientSecret:paymentIntentClientSecret];
-        resolve([NSNull null]);
+        resolve(@{
+            @"status": @"success",
+            @"isready": @YES,
+            @"code": @"",
+            @"message": @"Payment session initialized successfully"
+        });
     } else {
         reject(@"INIT_ERROR", @"HyperProvider not initialized", nil);
     }
@@ -48,26 +85,36 @@ RCT_EXPORT_MODULE()
                      reject:(RCTPromiseRejectBlock)reject {
     
     if (self.hyperProvider) {
+        // Store the promise for later resolution
+        self.presentPaymentSheetResolver = resolve;
+        self.presentPaymentSheetRejecter = reject;
+        
         [self.hyperProvider presentPaymentSheetWithConfiguration:configuration
                                                          callback:^(PaymentResult *result) {
-            if ([result.status isEqualToString:@"completed"]) {
-                NSDictionary *resultDict = @{
-                    @"status": result.status,
-                    @"message": result.message
-                };
-                resolve(resultDict);
-            } else if ([result.status isEqualToString:@"canceled"]) {
-                NSDictionary *resultDict = @{
-                    @"status": result.status,
-                    @"message": @"canceled"
-                };
-                resolve(resultDict);
-            } else {
-                reject(@"PAYMENT_ERROR", result.message, nil);
-            }
+            // Note: The callback can still be used for other purposes if needed
+            // but the promise resolution will be handled by exitPaymentSheet
         }];
     } else {
         reject(@"PRESENT_ERROR", @"HyperProvider not initialized", nil);
+    }
+}
+
+- (void)exitPaymentSheet:(NSDictionary *)result {
+    if (self.presentPaymentSheetResolver) {
+        NSString *status = result[@"status"];
+        NSLog(@"result: %@", status);
+        if ([status isEqualToString:@"succeeded"] || [status isEqualToString:@"cancelled"]) {
+            self.presentPaymentSheetResolver(result);
+        } else {
+            NSString *message = result[@"message"] ?: @"Payment failed";
+            if (self.presentPaymentSheetRejecter) {
+                self.presentPaymentSheetRejecter(@"PAYMENT_ERROR", message, nil);
+            }
+        }
+        
+        // Clear the stored promises
+        self.presentPaymentSheetResolver = nil;
+        self.presentPaymentSheetRejecter = nil;
     }
 }
 

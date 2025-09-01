@@ -1,9 +1,23 @@
 #import "HyperswitchSdkNative.h"
+#import "../Views/ApplePayHandler.h"
 #import <React/RCTLog.h>
+
+@interface HyperswitchSdkNative ()
+@property (nonatomic, strong) ApplePayHandler *applePayHandler;
+@property (nonatomic, copy) RCTResponseSenderBlock presentCallback;
+@end
 
 @implementation HyperswitchSdkNative
 
 RCT_EXPORT_MODULE(HyperModules)
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _applePayHandler = [[ApplePayHandler alloc] init];
+    }
+    return self;
+}
 
 - (void)sendMessageToNative:(NSString *)message {
     RCTLogInfo(@"sendMessageToNative called with: %@", message);
@@ -12,21 +26,28 @@ RCT_EXPORT_MODULE(HyperModules)
 
 - (void)launchApplePay:(NSString *)requestObj
               callback:(RCTResponseSenderBlock)callback {
-    RCTLogInfo(@"launchApplePay called");
-    // Implementation for Apple Pay
-    callback(@[@"Apple Pay implementation needed"]);
+    RCTLogInfo(@"launchApplePay called with: %@", requestObj);
+    
+    [self.applePayHandler startPayment:requestObj 
+                            rnCallback:callback 
+                       presentCallback:self.presentCallback];
 }
 
 - (void)startApplePay:(NSString *)requestObj
              callback:(RCTResponseSenderBlock)callback {
-    RCTLogInfo(@"startApplePay called");
-    callback(@[@"Apple Pay start implementation needed"]);
+    RCTLogInfo(@"startApplePay called with: %@", requestObj);
+    
+    // This method is typically used as a confirmation callback
+    // indicating that Apple Pay is ready to start
+    callback(@[]);
 }
 
 - (void)presentApplePay:(NSString *)requestObj
                callback:(RCTResponseSenderBlock)callback {
-    RCTLogInfo(@"presentApplePay called");
-    callback(@[@"Apple Pay present implementation needed"]);
+    RCTLogInfo(@"presentApplePay called with: %@", requestObj);
+    
+    // Store the present callback for later use when Apple Pay sheet is presented
+    self.presentCallback = callback;
 }
 
 - (void)launchGPay:(NSString *)requestObj
@@ -41,7 +62,60 @@ RCT_EXPORT_MODULE(HyperModules)
                    reset:(BOOL)reset {
     RCTLogInfo(@"exitPaymentsheet called with rootTag: %f, result: %@, reset: %@", 
                rootTag, result, reset ? @"YES" : @"NO");
-    // Implementation for exiting payment sheet
+    NSError *error;
+    NSData *data = [result dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+    
+    if (!error && resultDict) {
+        NSString *status = resultDict[@"status"];
+        RCTLogInfo(@"Payment result status: %@", status);
+        
+        // Find and dismiss the ReactViewController
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+            UIViewController *presentedVC = rootViewController.presentedViewController;
+            
+            // Look for ReactViewController in the presented view controllers
+            while (presentedVC) {
+                if ([presentedVC isKindOfClass:NSClassFromString(@"ReactViewController")]) {
+                    [presentedVC dismissViewControllerAnimated:YES completion:^{
+                        // Call exitPaymentSheet on HyperswitchSdkReactNative to resolve the promise
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"HyperPaymentSheetExit"
+                                                                            object:nil
+                                                                          userInfo:resultDict];
+                    }];
+                    break;
+                }
+                presentedVC = presentedVC.presentedViewController;
+            }
+        });
+    } else {
+        RCTLogInfo(@"Failed to parse payment result: %@", error.localizedDescription);
+        
+        // Even if parsing fails, try to dismiss the controller with a default result
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+            UIViewController *presentedVC = rootViewController.presentedViewController;
+            
+            while (presentedVC) {
+                if ([presentedVC isKindOfClass:NSClassFromString(@"ReactViewController")]) {
+                    [presentedVC dismissViewControllerAnimated:YES completion:^{
+                        NSDictionary *defaultResult = @{
+                            @"status": @"failed",
+                            @"message": @"Failed to parse payment result"
+                        };
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"HyperPaymentSheetExit"
+                                                                            object:nil
+                                                                          userInfo:defaultResult];
+                    }];
+                    break;
+                }
+                presentedVC = presentedVC.presentedViewController;
+            }
+        });
+    }
+
+    self.presentCallback = nil;
 }
 
 - (void)exitPaymentMethodManagement:(double)rootTag

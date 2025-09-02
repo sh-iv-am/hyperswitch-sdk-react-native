@@ -8,7 +8,7 @@ export interface Spec extends TurboModule {
     customLogUrl: undefined | string,
     customParams: undefined | Object
   ): Promise<void>;
-  initPaymentSession(paymentIntentClientSecret: string): Promise<void>;
+  initPaymentSession(paymentIntentClientSecret: string): Promise<string>;
   presentPaymentSheet(configuration: Object): Promise<Object>;
 }
 

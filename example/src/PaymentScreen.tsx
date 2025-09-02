@@ -11,6 +11,7 @@ import {
 export default function PaymentScreen() {
   const { initPaymentSession, presentPaymentSheet } = useHyper();
   const [status, setStatus] = useState<string | null | undefined>(null);
+  const [isReloadNeeded, setIsReloadNeeded] = useState(false);
   const createPaymentIntent = async (): Promise<string> => {
     try {
       const baseUrl =
@@ -41,9 +42,7 @@ export default function PaymentScreen() {
       throw error;
     }
   };
-
-  React.useEffect(() => {
-    const setup = async (): Promise<void> => {
+      const setup = async (): Promise<void> => {
       try {
         const paymentIntent = await createPaymentIntent();
 
@@ -53,10 +52,11 @@ export default function PaymentScreen() {
 
         const result: InitPaymentSessionResult =
           await initPaymentSession(params);
-
+        
         if (result.error) {
           console.error('Payment session initialization failed:', result.error);
         }else{
+          setIsReloadNeeded(false);
           setStatus("")
         }
       } catch (error) {
@@ -64,6 +64,7 @@ export default function PaymentScreen() {
       }
     };
 
+  React.useEffect(() => {
     setup();
   }, [initPaymentSession]);
 
@@ -90,12 +91,14 @@ export default function PaymentScreen() {
       setStatus(`Checkout failed: ${JSON.stringify(error.message)}`);
       console.error('Checkout failed:', error);
     }
+    setIsReloadNeeded(true);
   };
 
   return (
     <View style={styles.container}>
-      <Button title="Checkout" onPress={checkout} />
+      {!isReloadNeeded && <Button title="Checkout" onPress={checkout} />}
       <Text style={styles.statusText}>{status}</Text>
+      {isReloadNeeded && <Button title="Restart" onPress={setup} />}
     </View>
   );
 }

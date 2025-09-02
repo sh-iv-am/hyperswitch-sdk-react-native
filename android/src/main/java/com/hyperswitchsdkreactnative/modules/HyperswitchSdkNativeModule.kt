@@ -4,7 +4,15 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactMethod
 import android.util.Log
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.bridge.WritableNativeMap
+import org.json.JSONObject
+import org.json.JSONException
 import com.hyperswitchsdkreactnative.NativeHyperswitchSdkNativeSpec
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule.Companion.resetView
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule.Companion.resolvePromise
+import com.hyperswitchsdkreactnative.gpay.GooglePayCallbackManager
 
 /**
  * HyperModules TurboModule implementation that bridges the bundle's expectations
@@ -44,35 +52,68 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun launchGPay(requestObj: String, callback: Callback) {
-    Log.d(NAME, "launchGPay called")
+    currentActivity?.let {
+      GooglePayCallbackManager.setCallback(
+        it,
+        requestObj,
+        fun(data: Map<String, Any?>) {
+          callback.invoke(mapToWritableMap(data))
+        },
+      )
+    } ?: run {
+      GooglePayCallbackManager.setCallback(
+        reactApplicationContext,
+        requestObj,
+        fun(data: Map<String, Any?>) {
+          callback.invoke(mapToWritableMap(data))
+        },
+      )
+    }
   }
 
   @ReactMethod
   override fun exitPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
     Log.d(NAME, "exitPaymentsheet called $result")
+    try {
+      val jsonObject = JSONObject(result)
+      val writableMap = jsonToWritableMap(jsonObject)
+      resolvePromise(writableMap)
+    } catch (e: JSONException) {
+      Log.e(NAME, "Failed to parse JSON result: $result", e)
+      resolvePromise(result)
+    }
+    resetView()
   }
 
   @ReactMethod
   override fun exitPaymentMethodManagement(rootTag: Double, result: String, reset: Boolean) {
     Log.d(NAME, "exitPaymentMethodManagement called $result")
+    resolvePromise(result)
+
     // Implementation for exiting payment method management
   }
 
   @ReactMethod
   override fun exitWidget(result: String, widgetType: String) {
     Log.d(NAME, "exitWidget called with result: $result, widgetType: $widgetType")
+    resolvePromise(result)
+
     // Implementation for exiting widget
   }
 
   @ReactMethod
   override fun exitCardForm(result: String) {
     Log.d(NAME, "exitCardForm called with result: $result")
+    resolvePromise(result)
+
     // Implementation for exiting card form
   }
 
   @ReactMethod
   override fun exitWidgetPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
     Log.d(NAME, "exitWidgetPaymentsheet called")
+    resolvePromise(result)
+
     // Implementation for exiting widget payment sheet
   }
 
@@ -93,6 +134,41 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
   override fun onAddPaymentMethod(data: String) {
     Log.d(NAME, "onAddPaymentMethod called with data: $data")
     // Implementation for adding payment method
+  }
+
+  private fun mapToWritableMap(map: Map<String, Any?>): WritableMap {
+    val writableMap = WritableNativeMap()
+    for ((key, value) in map) {
+      when (value) {
+        null -> writableMap.putNull(key)
+        is Boolean -> writableMap.putBoolean(key, value)
+        is Double -> writableMap.putDouble(key, value)
+        is Int -> writableMap.putInt(key, value)
+        is String -> writableMap.putString(key, value)
+        is Map<*, *> -> writableMap.putMap(key, mapToWritableMap(value as Map<String, Any?>))
+        else -> writableMap.putString(key, value.toString())
+      }
+    }
+    return writableMap
+  }
+
+  private fun jsonToWritableMap(jsonObject: JSONObject): WritableMap {
+    val writableMap = WritableNativeMap()
+    val keys = jsonObject.keys()
+    while (keys.hasNext()) {
+      val key = keys.next()
+      val value = jsonObject.get(key)
+      when (value) {
+        JSONObject.NULL -> writableMap.putNull(key)
+        is Boolean -> writableMap.putBoolean(key, value)
+        is Double -> writableMap.putDouble(key, value)
+        is Int -> writableMap.putInt(key, value)
+        is String -> writableMap.putString(key, value)
+        is JSONObject -> writableMap.putMap(key, jsonToWritableMap(value))
+        else -> writableMap.putString(key, value.toString())
+      }
+    }
+    return writableMap
   }
 
   companion object {

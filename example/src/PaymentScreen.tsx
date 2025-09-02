@@ -16,8 +16,8 @@ export default function PaymentScreen() {
     try {
       const baseUrl =
         Platform.OS === 'android'
-          ? 'http://10.0.2.2:5252'
-          : 'http://localhost:5252';
+          ? 'http://10.10.28.26:5252'
+          : 'http://10.10.28.26:5252';
       const response = await fetch(`${baseUrl}/create-payment-intent`, {
         method: 'POST',
         headers: {
@@ -80,7 +80,7 @@ export default function PaymentScreen() {
 
       const result: PresentPaymentSheetResult =
         await presentPaymentSheet(options);
-
+      console.log("manideep",result)
       if (result.error) {
         console.error('Payment failed:', JSON.stringify(result.error));
         setStatus(`Payment failed: ${JSON.stringify(result.error)}`);

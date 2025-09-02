@@ -46,7 +46,7 @@ internal class HyperProvider internal constructor(private val activity: Activity
   }
 
 
-  fun presentPaymentSheet(readableMap: ReadableMap,callback: (PaymentResult) -> Unit) {
+  fun presentPaymentSheet(readableMap: ReadableMap) {
     val activity = activity as? FragmentActivity
     activity?.let {
       val propsBundle = Bundle().apply {
@@ -74,7 +74,7 @@ internal class HyperProvider internal constructor(private val activity: Activity
       fragmentTransaction.addToBackStack("HyperPaymentSheet")
       fragmentTransaction.commit()
     } ?: run {
-      callback(PaymentResult(status = "failed", message = "Activity is not a FragmentActivity"))
+//      callback(PaymentResult(status = "failed", message = "Activity is not a FragmentActivity"))
     }
   }
 

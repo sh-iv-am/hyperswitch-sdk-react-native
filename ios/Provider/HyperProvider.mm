@@ -85,7 +85,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         // Create ReactViewController with props passed directly to initializer
-        NSLog(@"Presenting payment sheet with props: %@", props);
+//        NSLog(@"Presenting payment sheet with props: %@", props);
         ReactViewController *reactVC = [[ReactViewController alloc] initWithProps:@{@"props": props}];
         
         reactVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;

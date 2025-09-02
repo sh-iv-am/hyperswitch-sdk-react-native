@@ -36,13 +36,7 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
       currentActivity?.let { activity ->
         hyperProvider = HyperProvider(activity)
         hyperProvider!!.initialise(publishableKey, customBackendUrl, customLogUrl, customParams)
-        val data = WritableNativeMap().apply {
-          putBoolean("isready", true)
-          putString("status", "success")
-          putString("code", "")
-          putString("message", "Payment initialised successfully")
-        }
-        promise?.resolve(data)
+        promise?.resolve(null)
       } ?: run {
         promise?.reject("INITIALIZATION_ERROR", "Current activity is null")
       }
@@ -55,13 +49,7 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
     try {
       hyperProvider?.let { provider ->
         provider.initPaymentSession(clientSecret = paymentIntentClientSecret)
-        val data = WritableNativeMap().apply {
-          putBoolean("isready", true)
-          putString("status", "success")
-          putString("code", "")
-          putString("message", "Payment session init successfully")
-        }
-        promise?.resolve(data)
+        promise?.resolve(null)
       } ?: run {
         promise?.reject("INIT_ERROR", "HyperProvider not initialized")
       }
@@ -74,29 +62,8 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
     try {
       hyperProvider?.let { provider ->
         sheetPromise = promise
-        provider.presentPaymentSheet(readableMap) { result ->
-          when (result.status) {
-            "completed" -> {
-              val resultMap: WritableMap = WritableNativeMap().apply {
-                putString("status", "completed")
-                putString("message", result.message)
-              }
-              promise?.resolve(resultMap)
-            }
+        provider.presentPaymentSheet(readableMap)
 
-            "canceled" -> {
-              val resultMap: WritableMap = WritableNativeMap().apply {
-                putString("status", "canceled")
-                putString("message", "canceled")
-              }
-              promise?.resolve(resultMap)
-            }
-
-            "failed" -> {
-              promise?.reject("PAYMENT_ERROR", result.message)
-            }
-          }
-        }
       }
     } catch (e: Exception) {
       promise?.reject("PRESENT_ERROR", "Failed to present payment sheet: ${e.message}")

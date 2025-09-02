@@ -48,10 +48,10 @@ let make = (
 
   let initialise = async () => {
     try {
-      let data = await initHyperswitch(~publishableKey, ~customBackendUrl?, ~customLogUrl?, ~customParams?)
+      let _ = await initHyperswitch(~publishableKey, ~customBackendUrl?, ~customLogUrl?, ~customParams?)
       setState(_ => {
         ...state,
-        isInitialized: data.isready->Option.getOr(false),
+        isInitialized:true,
       })
     } catch {
     | Exn.Error(obj) =>

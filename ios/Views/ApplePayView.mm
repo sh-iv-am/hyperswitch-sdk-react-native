@@ -195,9 +195,9 @@ using namespace facebook::react;
 }
 
 - (void)sendPaymentResult:(NSDictionary *)result {
-    // For now, just log the result - proper event emission would require 
+    // just log the result - proper event emission would require 
     // defining the event in the component specification
-    NSLog(@"Apple Pay Result: %@", result);
+//    NSLog(@"Apple Pay Result: %@", result);
 }
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps

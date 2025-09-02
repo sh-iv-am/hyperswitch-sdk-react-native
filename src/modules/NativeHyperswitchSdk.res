@@ -1,32 +1,25 @@
-type initialiseResult = {
-  isready?: bool,
-  error?: string,
-  status?: string,
-  message?: string,
-  code?: string,
-}
 
 type initialise = (
   ~publishableKey: string,
   ~customBackendUrl: string=?,
   ~customLogUrl: string=?,
   ~customParams: Js.Json.t=?,
-) => promise<initialiseResult>
+) => promise<unit>
 
-type initPaymentSession = (~paymentIntentClientSecret: string) => promise<initialiseResult>
+type initPaymentSession = (~paymentIntentClientSecret: string) => promise<unit>
 
 @genType
 type initPaymentSessionParams = {paymentIntentClientSecret?: string}
 
 @genType
-type initPaymentSessionResult = initialiseResult
+type initPaymentSessionResult = {error?: string}
 
 @genType
 type presentPaymentSheetParams = PaymentSheetConfiguration.options
 
 type status =
-  | @as("Completed") Completed
-  | @as("Canceled") Canceled
+  | @as("succeeded") Completed
+  | @as("cancelled") Canceled
   | @as("Failed") Failed
 
 type presentPaymentSheetResult = {
@@ -37,7 +30,7 @@ type presentPaymentSheetResult = {
 }
 
 @genType
-type presentPaymentSheet = presentPaymentSheetParams => promise<presentPaymentSheetResult>
+type presentPaymentSheet = presentPaymentSheetParams => promise<string>
 
 type nativeHyperswitchSdk = {
   initialise: initialise,

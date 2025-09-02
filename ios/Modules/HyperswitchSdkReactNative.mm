@@ -51,12 +51,7 @@ RCT_EXPORT_MODULE()
                                              customBackendUrl:customBackendUrl
                                                 customLogUrl:customLogUrl
                                                 customParams:customParams];
-            resolve(@{
-                @"status": @"success",
-                @"isready": @YES,
-                @"code": @"",
-                @"message": @"HyperProvider initialized successfully"
-            });
+            resolve([NSNull null]);
         } else {
             reject(@"INITIALIZATION_ERROR", @"Root view controller is nil", nil);
         }
@@ -69,12 +64,7 @@ RCT_EXPORT_MODULE()
     
     if (self.hyperProvider) {
         [self.hyperProvider initPaymentSessionWithClientSecret:paymentIntentClientSecret];
-        resolve(@{
-            @"status": @"success",
-            @"isready": @YES,
-            @"code": @"",
-            @"message": @"Payment session initialized successfully"
-        });
+        resolve([NSNull null]);
     } else {
         reject(@"INIT_ERROR", @"HyperProvider not initialized", nil);
     }
@@ -91,8 +81,6 @@ RCT_EXPORT_MODULE()
         
         [self.hyperProvider presentPaymentSheetWithConfiguration:configuration
                                                          callback:^(PaymentResult *result) {
-            // Note: The callback can still be used for other purposes if needed
-            // but the promise resolution will be handled by exitPaymentSheet
         }];
     } else {
         reject(@"PRESENT_ERROR", @"HyperProvider not initialized", nil);
@@ -102,7 +90,6 @@ RCT_EXPORT_MODULE()
 - (void)exitPaymentSheet:(NSDictionary *)result {
     if (self.presentPaymentSheetResolver) {
         NSString *status = result[@"status"];
-        NSLog(@"result: %@", status);
         if ([status isEqualToString:@"succeeded"] || [status isEqualToString:@"cancelled"]) {
             self.presentPaymentSheetResolver(result);
         } else {

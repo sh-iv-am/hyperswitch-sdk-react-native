@@ -27,26 +27,26 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun sendMessageToNative(message: String) {
-    Log.d(NAME, "sendMessageToNative called with: $message")
+//    Log.d(NAME, "sendMessageToNative called with: $message")
     // Forward to HyperswitchSdkModule if needed
   }
 
   @ReactMethod
   override fun launchApplePay(requestObj: String, callback: Callback) {
-    Log.d(NAME, "launchApplePay called")
+//    Log.d(NAME, "launchApplePay called")
     // Implementation for Apple Pay
     callback.invoke("Apple Pay not implemented")
   }
 
   @ReactMethod
   override fun startApplePay(requestObj: String, callback: Callback) {
-    Log.d(NAME, "startApplePay called")
+//    Log.d(NAME, "startApplePay called")
     callback.invoke("Apple Pay start not implemented")
   }
 
   @ReactMethod
   override fun presentApplePay(requestObj: String, callback: Callback) {
-    Log.d(NAME, "presentApplePay called")
+//    Log.d(NAME, "presentApplePay called")
     callback.invoke("Apple Pay present not implemented")
   }
 
@@ -73,11 +73,10 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun exitPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
-    Log.d(NAME, "exitPaymentsheet called $result")
+//    Log.d(NAME, "exitPaymentsheet called $result")
     try {
-      val jsonObject = JSONObject(result)
-      val writableMap = jsonToWritableMap(jsonObject)
-      resolvePromise(writableMap)
+//      val jsonObject = JSONObject(result)
+      resolvePromise(result)
     } catch (e: JSONException) {
       Log.e(NAME, "Failed to parse JSON result: $result", e)
       resolvePromise(result)
@@ -87,7 +86,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun exitPaymentMethodManagement(rootTag: Double, result: String, reset: Boolean) {
-    Log.d(NAME, "exitPaymentMethodManagement called $result")
+//    Log.d(NAME, "exitPaymentMethodManagement called $result")
     resolvePromise(result)
 
     // Implementation for exiting payment method management
@@ -95,7 +94,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun exitWidget(result: String, widgetType: String) {
-    Log.d(NAME, "exitWidget called with result: $result, widgetType: $widgetType")
+//    Log.d(NAME, "exitWidget called with result: $result, widgetType: $widgetType")
     resolvePromise(result)
 
     // Implementation for exiting widget
@@ -103,7 +102,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun exitCardForm(result: String) {
-    Log.d(NAME, "exitCardForm called with result: $result")
+//    Log.d(NAME, "exitCardForm called with result: $result")
     resolvePromise(result)
 
     // Implementation for exiting card form
@@ -111,7 +110,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun exitWidgetPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
-    Log.d(NAME, "exitWidgetPaymentsheet called")
+//    Log.d(NAME, "exitWidgetPaymentsheet called")
     resolvePromise(result)
 
     // Implementation for exiting widget payment sheet
@@ -119,20 +118,20 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun launchWidgetPaymentSheet(requestObj: String, callback: Callback) {
-    Log.d(NAME, "launchWidgetPaymentSheet called")
+//    Log.d(NAME, "launchWidgetPaymentSheet called")
     // Implementation for launching widget payment sheet
     callback.invoke("Widget payment sheet not implemented")
   }
 
   @ReactMethod
   override fun updateWidgetHeight(height: Double) {
-    Log.d(NAME, "updateWidgetHeight called with height: $height")
+//    Log.d(NAME, "updateWidgetHeight called with height: $height")
     // Implementation for updating widget height
   }
 
   @ReactMethod
   override fun onAddPaymentMethod(data: String) {
-    Log.d(NAME, "onAddPaymentMethod called with data: $data")
+//    Log.d(NAME, "onAddPaymentMethod called with data: $data")
     // Implementation for adding payment method
   }
 
@@ -152,24 +151,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
     return writableMap
   }
 
-  private fun jsonToWritableMap(jsonObject: JSONObject): WritableMap {
-    val writableMap = WritableNativeMap()
-    val keys = jsonObject.keys()
-    while (keys.hasNext()) {
-      val key = keys.next()
-      val value = jsonObject.get(key)
-      when (value) {
-        JSONObject.NULL -> writableMap.putNull(key)
-        is Boolean -> writableMap.putBoolean(key, value)
-        is Double -> writableMap.putDouble(key, value)
-        is Int -> writableMap.putInt(key, value)
-        is String -> writableMap.putString(key, value)
-        is JSONObject -> writableMap.putMap(key, jsonToWritableMap(value))
-        else -> writableMap.putString(key, value.toString())
-      }
-    }
-    return writableMap
-  }
+
 
   companion object {
     const val NAME = "HyperModules"

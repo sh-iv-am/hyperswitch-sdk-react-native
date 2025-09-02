@@ -1,5 +1,5 @@
 #import "ReactViewController.h"
-#import "../Views/ApplePayView.h"
+//#import "ApplePayView.h"
 
 @implementation ReactViewController
 
@@ -59,28 +59,26 @@
 }
 
 - (NSURL *)bundleURL {
-    // First try to load from the main bundle (for development)
 //    NSURL *bundleURL = [[NSBundle mainBundle] URLForResource:@"hyperswitch" withExtension:@"bundle"];
     
 //    if (!bundleURL) {
-        // If not found in main bundle, try to load from the HyperswitchSdkReactNative bundle
         NSBundle *hyperswitchBundle = [NSBundle bundleForClass:[self class]];
         NSURL *bundleURL = [hyperswitchBundle URLForResource:@"hyperswitch" withExtension:@"bundle"];
 //    }
-    
-    if (!bundleURL) {
-        NSLog(@"ReactViewController: Could not find hyperswitch.bundle");
-    } else {
-        NSLog(@"ReactViewController: Found hyperswitch.bundle at: %@", bundleURL);
-    }
+//    
+//    if (!bundleURL) {
+//        NSLog(@"ReactViewController: Could not find hyperswitch.bundle");
+//    } else {
+//        NSLog(@"ReactViewController: Found hyperswitch.bundle at: %@", bundleURL);
+//    }
     
     return bundleURL;
 }
 
-- (NSDictionary<NSString *, Class<RCTComponentViewProtocol>> *)thirdPartyFabricComponents {
-    return @{
-        @"ApplePayView": [ApplePayView class]
-    };
-}
+//- (NSDictionary<NSString *, Class<RCTComponentViewProtocol>> *)thirdPartyFabricComponents {
+//    return @{
+//        @"ApplePayView": [ApplePayView class]
+//    };
+//}
 
 @end

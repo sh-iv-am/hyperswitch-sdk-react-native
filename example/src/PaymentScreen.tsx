@@ -54,10 +54,12 @@ export default function PaymentScreen() {
           await initPaymentSession(params);
         
         if (result.error) {
+          setIsReloadNeeded(true);
+          setStatus(`Initialization failed: ${result.error}`);
           console.error('Payment session initialization failed:', result.error);
-        }else{
+        } else {
           setIsReloadNeeded(false);
-          setStatus("")
+          setStatus("");
         }
       } catch (error) {
         console.error('Setup failed:', error);

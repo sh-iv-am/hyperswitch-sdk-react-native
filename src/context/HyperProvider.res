@@ -48,10 +48,10 @@ let make = (
 
   let initialise = async () => {
     try {
-      await initHyperswitch(~publishableKey, ~customBackendUrl?, ~customLogUrl?, ~customParams?)
+      let _ = await initHyperswitch(~publishableKey, ~customBackendUrl?, ~customLogUrl?, ~customParams?)
       setState(_ => {
         ...state,
-        isInitialized: true,
+        isInitialized:true,
       })
     } catch {
     | Exn.Error(obj) =>
@@ -64,7 +64,9 @@ let make = (
   }
 
   React.useEffect1(() => {
-    initialise()->ignore
+    if (publishableKey != "") {
+      initialise()->ignore
+    }
     None
   }, [publishableKey])
 

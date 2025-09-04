@@ -90,3 +90,6 @@ nitrogen/
 .bsb.lock
 *.res.js
 *.gen.tsx
+
+
+lib/**

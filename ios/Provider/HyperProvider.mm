@@ -66,6 +66,7 @@
     // Set up the props similar to Android implementation
     NSMutableDictionary *props = [@{
         @"type": @"payment",
+        @"from": @"rn",
         @"publishableKey": self.publishableKey ?: @"",
         @"clientSecret": self.clientSecret ?: @"",
         @"configuration": configuration
@@ -85,6 +86,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         // Create ReactViewController with props passed directly to initializer
+//        NSLog(@"Presenting payment sheet with props: %@", props);
         ReactViewController *reactVC = [[ReactViewController alloc] initWithProps:@{@"props": props}];
         
         reactVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;

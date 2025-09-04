@@ -29,6 +29,24 @@ using namespace facebook::react;
     _props = defaultProps;
 
     _view = [[UIView alloc] init];
+    
+    // Set default styling to make the box visible
+    _view.backgroundColor = [UIColor systemBlueColor];
+    _view.layer.borderWidth = 2.0f;
+    _view.layer.borderColor = [UIColor blackColor].CGColor;
+    _view.layer.cornerRadius = 8.0f;
+    
+    // Add a label to show it's working
+    UILabel *label = [[UILabel alloc] init];
+    label.text = @"Hyperswitch Box";
+    label.textAlignment = NSTextAlignmentCenter;
+    label.textColor = [UIColor blackColor];
+    label.font = [UIFont boldSystemFontOfSize:16];
+    label.frame = CGRectMake(0, 0, 200, 50);
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [_view addSubview:label];
+    
+    NSLog(@"HyperswitchSdkReactNativeView: Created view with frame %@", NSStringFromCGRect(frame));
 
     self.contentView = _view;
   }
@@ -47,6 +65,16 @@ using namespace facebook::react;
     }
 
     [super updateProps:props oldProps:oldProps];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    // Ensure the inner view fills the entire container
+    if (_view) {
+        _view.frame = self.bounds;
+        NSLog(@"HyperswitchSdkReactNativeView: Layout updated to frame %@", NSStringFromCGRect(self.bounds));
+    }
 }
 
 Class<RCTComponentViewProtocol> HyperswitchSdkReactNativeViewCls(void)

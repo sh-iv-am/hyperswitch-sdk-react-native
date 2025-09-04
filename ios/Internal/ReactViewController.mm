@@ -1,4 +1,5 @@
 #import "ReactViewController.h"
+//#import "ApplePayView.h"
 
 @implementation ReactViewController
 
@@ -15,7 +16,7 @@
     
     self.reactNativeFactoryDelegate = [[ReactNativeDelegate alloc] init];
     [(ReactNativeDelegate *)self.reactNativeFactoryDelegate setDependencyProvider:[[RCTAppDependencyProvider alloc] init]];
-    
+
     self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:self.reactNativeFactoryDelegate];
     
     // Use initialProps if set, otherwise use default props
@@ -53,8 +54,31 @@
     return [self bundleURL];
 }
 
-- (NSURL *)bundleURL {
-    return [[NSBundle mainBundle] URLForResource:@"hyperswitch" withExtension:@"bundle"];
+- (BOOL)useDeveloperSupport:(RCTReactNativeFactory *)factory {
+    return NO;
 }
+
+- (NSURL *)bundleURL {
+//    NSURL *bundleURL = [[NSBundle mainBundle] URLForResource:@"hyperswitch" withExtension:@"bundle"];
+    
+//    if (!bundleURL) {
+        NSBundle *hyperswitchBundle = [NSBundle bundleForClass:[self class]];
+        NSURL *bundleURL = [hyperswitchBundle URLForResource:@"hyperswitch" withExtension:@"bundle"];
+//    }
+//    
+//    if (!bundleURL) {
+//        NSLog(@"ReactViewController: Could not find hyperswitch.bundle");
+//    } else {
+//        NSLog(@"ReactViewController: Found hyperswitch.bundle at: %@", bundleURL);
+//    }
+    
+    return bundleURL;
+}
+
+//- (NSDictionary<NSString *, Class<RCTComponentViewProtocol>> *)thirdPartyFabricComponents {
+//    return @{
+//        @"ApplePayView": [ApplePayView class]
+//    };
+//}
 
 @end

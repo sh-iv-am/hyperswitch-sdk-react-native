@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,cpp}"
   s.private_header_files = "ios/**/*.h"
-  s.resources = ["ios/assets/hyperswitch.bundle"]
+  s.resources = ["ios/resources/hyperswitch.bundle"]
   
   s.frameworks = "PassKit"
 

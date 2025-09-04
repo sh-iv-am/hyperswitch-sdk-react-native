@@ -66,6 +66,7 @@
     // Set up the props similar to Android implementation
     NSMutableDictionary *props = [@{
         @"type": @"payment",
+        @"from": @"rn",
         @"publishableKey": self.publishableKey ?: @"",
         @"clientSecret": self.clientSecret ?: @"",
         @"configuration": configuration

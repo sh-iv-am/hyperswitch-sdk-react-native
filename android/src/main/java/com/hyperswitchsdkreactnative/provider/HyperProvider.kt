@@ -51,6 +51,7 @@ internal class HyperProvider internal constructor(private val activity: Activity
     activity?.let {
       val propsBundle = Bundle().apply {
         putString("type", "payment")
+        putString("from", "rn")
         putString("publishableKey", publishableKey ?: "")
         putString("clientSecret", clientSecret ?: "")
         putBundle("configuration", readableMapToBundle(readableMap))

@@ -12,12 +12,13 @@ export default function PaymentScreen() {
   const { initPaymentSession, presentPaymentSheet } = useHyper();
   const [status, setStatus] = useState<string | null | undefined>(null);
   const [isReloadNeeded, setIsReloadNeeded] = useState(false);
+  const [message, setMessage] = useState<string | null | undefined>(null);
   const createPaymentIntent = async (): Promise<string> => {
     try {
       const baseUrl =
         Platform.OS === 'android'
-          ? 'http://10.10.28.26:5252'
-          : 'http://10.10.28.26:5252';
+          ? 'http://10.0.2.2:5252'
+          : 'http://localhost:5252';
       const response = await fetch(`${baseUrl}/create-payment-intent`, {
         method: 'POST',
         headers: {
@@ -42,29 +43,29 @@ export default function PaymentScreen() {
       throw error;
     }
   };
-      const setup = async (): Promise<void> => {
-      try {
-        const paymentIntent = await createPaymentIntent();
+  const setup = async (): Promise<void> => {
+    try {
+      const paymentIntent = await createPaymentIntent();
 
-        const params: InitPaymentSessionParams = {
-          paymentIntentClientSecret: paymentIntent,
-        };
+      const params: InitPaymentSessionParams = {
+        paymentIntentClientSecret: paymentIntent,
+      };
 
-        const result: InitPaymentSessionResult =
-          await initPaymentSession(params);
-        
-        if (result.error) {
-          setIsReloadNeeded(true);
-          setStatus(`Initialization failed: ${result.error}`);
-          console.error('Payment session initialization failed:', result.error);
-        } else {
-          setIsReloadNeeded(false);
-          setStatus("");
-        }
-      } catch (error) {
-        console.error('Setup failed:', error);
+      const result: InitPaymentSessionResult = await initPaymentSession(params);
+
+      if (result.error) {
+        setIsReloadNeeded(true);
+        setStatus(`Initialization failed: ${result.error}`);
+        console.error('Payment session initialization failed:', result.error);
+      } else {
+        setIsReloadNeeded(false);
+        setMessage('');
+        setStatus('');
       }
-    };
+    } catch (error) {
+      console.error('Setup failed:', error);
+    }
+  };
 
   React.useEffect(() => {
     setup();
@@ -80,16 +81,18 @@ export default function PaymentScreen() {
 
       const result: PresentPaymentSheetResult =
         await presentPaymentSheet(options);
-      console.log("manideep",result)
+      console.log('manideep', result);
       if (result.error) {
         console.error('Payment failed:', JSON.stringify(result.error));
         setStatus(`Payment failed: ${JSON.stringify(result.error)}`);
       } else {
         setStatus(result.status);
+        setMessage(`${result.message}`);
         console.log('Payment completed with status:', result.status);
         console.log('Message:', result.message);
       }
-    } catch (error : any) {
+    } catch (error: any) {
+      setMessage(`${error.message}`);
       setStatus(`Checkout failed: ${JSON.stringify(error.message)}`);
       console.error('Checkout failed:', error);
     }
@@ -99,8 +102,9 @@ export default function PaymentScreen() {
   return (
     <View style={styles.container}>
       {!isReloadNeeded && <Button title="Checkout" onPress={checkout} />}
-      <Text style={styles.statusText}>{status}</Text>
       {isReloadNeeded && <Button title="Restart" onPress={setup} />}
+      {message && <Text>{message}</Text>}
+      <Text style={styles.statusText}>{status}</Text>
     </View>
   );
 }

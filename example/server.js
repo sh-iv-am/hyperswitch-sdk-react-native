@@ -121,37 +121,37 @@ app.post('/create-payment-intent', async (req, res) => {
     // Prepare payment intent data
     const paymentData = {
       amount: 2999,
-    currency: 'USD',
-    authentication_type: 'no_three_ds',
-    customer_id: 'hyperswitch_demo_customer_id_demo_demo',
-    capture_method: 'automatic',
-    email: 'abc@gmail.com',
-    billing: {
-      address: {
-        line1: '1467',
-        line2: 'Harrison Street',
-        line3: 'Harrison Street',
-        city: 'San Fransico',
-        state: 'California',
-        zip: '94122',
-        country: 'US',
-        first_name: 'joseph',
-        last_name: 'Doe',
+      currency: 'USD',
+      authentication_type: 'no_three_ds',
+      customer_id: 'hyperswitch_demo_customer_id_demo_demo',
+      capture_method: 'automatic',
+      email: 'abc@gmail.com',
+      billing: {
+        address: {
+          line1: '1467',
+          line2: 'Harrison Street',
+          line3: 'Harrison Street',
+          city: 'San Fransico',
+          state: 'California',
+          zip: '94122',
+          country: 'US',
+          first_name: 'joseph',
+          last_name: 'Doe',
+        },
       },
-    },
-    shipping: {
-      address: {
-        line1: '1467',
-        line2: 'Harrison Street',
-        line3: 'Harrison Street',
-        city: 'San Fransico',
-        state: 'California',
-        zip: '94122',
-        country: 'US',
-        first_name: 'joseph',
-        last_name: 'Doe',
+      shipping: {
+        address: {
+          line1: '1467',
+          line2: 'Harrison Street',
+          line3: 'Harrison Street',
+          city: 'San Fransico',
+          state: 'California',
+          zip: '94122',
+          country: 'US',
+          first_name: 'joseph',
+          last_name: 'Doe',
+        },
       },
-    },
     };
 
     // Add customer_id if provided
@@ -171,17 +171,15 @@ app.post('/create-payment-intent', async (req, res) => {
       payment_id: response.data.payment_id,
     });
 
-
     // Return the payment intent data
     res.json({
       success: true,
       // payment_intent: response.data,
-      clientSecret : response.data.client_secret,
+      clientSecret: response.data.client_secret,
       client_secret: response.data.client_secret,
       publishable_key: HYPERSWITCH_PUBLISHABLE_KEY,
-      publishableKey: HYPERSWITCH_PUBLISHABLE_KEY
+      publishableKey: HYPERSWITCH_PUBLISHABLE_KEY,
     });
-
   } catch (error) {
     logger.error(
       'Error creating payment intent',

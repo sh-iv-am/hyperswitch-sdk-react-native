@@ -21,6 +21,7 @@ import com.facebook.react.defaults.DefaultComponentsRegistry
 import com.facebook.react.defaults.DefaultTurboModuleManagerDelegate
 import com.facebook.react.fabric.ComponentFactory
 import com.facebook.react.fabric.FabricUIManagerProviderImpl
+// import com.facebook.react.fabric.ReactNativeConfig
 import com.facebook.react.runtime.JSRuntimeFactory
 import com.facebook.react.runtime.hermes.HermesInstance
 import com.facebook.react.uimanager.ViewManagerRegistry
@@ -68,6 +69,7 @@ protected constructor(
                     reactInstanceManager.getOrCreateViewManagers(reactApplicationContext))
               }
 
+          // val reactNativeConfig = ReactNativeConfig.DEFAULT_CONFIG
           FabricUIManagerProviderImpl(componentFactory, viewManagerRegistry)
               .createUIManager(reactApplicationContext)
         }

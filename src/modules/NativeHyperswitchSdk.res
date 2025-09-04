@@ -22,6 +22,7 @@ type status =
   | @as("cancelled") Canceled
   | @as("Failed") Failed
 
+@genType
 type presentPaymentSheetResult = {
   status: status,
   message: string,

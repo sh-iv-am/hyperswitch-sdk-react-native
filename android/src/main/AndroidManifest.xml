@@ -5,5 +5,20 @@
     <activity android:enableOnBackInvokedCallback="true"
       tools:targetApi="33" android:name="com.hyperswitchsdkreactnative.gpay.GooglePayActivity" android:exported="false">
     </activity>
+    <activity
+      android:name=".activity.RedirectActivity"
+      android:exported="true"
+      android:launchMode="singleTask"
+      >
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data android:scheme="${applicationId}.hyperswitch" />
+        <data android:host="" tools:ignore="AppLinkUrlError" />
+      </intent-filter>
+    </activity>
   </application>
 </manifest>

@@ -1,3 +1,4 @@
+// eslint disable
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -120,25 +121,14 @@ app.post('/create-payment-intent', async (req, res) => {
 
     // Prepare payment intent data
     const paymentData = {
-      amount: 2999,
+      amount: 12347,
       currency: 'USD',
-      authentication_type: 'no_three_ds',
-      customer_id: 'hyperswitch_demo_customer_id_demo_demo',
       capture_method: 'automatic',
-      email: 'abc@gmail.com',
-      billing: {
-        address: {
-          line1: '1467',
-          line2: 'Harrison Street',
-          line3: 'Harrison Street',
-          city: 'San Fransico',
-          state: 'California',
-          zip: '94122',
-          country: 'US',
-          first_name: 'joseph',
-          last_name: 'Doe',
-        },
-      },
+      authentication_type: 'three_ds',
+      setup_future_usage: 'on_session',
+      request_external_three_ds_authentication: false,
+      email: 'user@gmail.com',
+      description: 'Hello this is description',
       shipping: {
         address: {
           line1: '1467',
@@ -151,7 +141,39 @@ app.post('/create-payment-intent', async (req, res) => {
           first_name: 'joseph',
           last_name: 'Doe',
         },
+        phone: {
+          number: '123456789',
+          country_code: '+1',
+        },
       },
+      connector_metadata: {
+        noon: {
+          order_category: 'applepay',
+        },
+      },
+      metadata: {
+        udf1: 'value1',
+        new_customer: 'true',
+        login_date: '2019-09-10T10:11:12Z',
+      },
+      billing: {
+        address: {
+          line1: '1467',
+          line2: 'Harrison Street',
+          line3: 'Harrison Street',
+          city: 'San Fransico',
+          state: 'California',
+          zip: '94122',
+          country: 'US',
+          first_name: 'joseph',
+          last_name: 'Doe',
+        },
+        phone: {
+          number: '8056594427',
+          country_code: '+91',
+        },
+      },
+      customer_id: 'hyperswitch_sdk_demo_id',
     };
 
     // Add customer_id if provided

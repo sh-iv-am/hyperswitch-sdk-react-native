@@ -23,47 +23,56 @@ class GooglePayActivity : AppCompatActivity() {
   @SuppressLint("SuspiciousIndentation")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val intent = intent
-    val gPayRequest = JSONObject(intent.getStringExtra("gPayRequest").toString())
-    var isReadyToPayJson: JSONObject? = null
-    var environment = "TEST" // Default Value is Test
-    if (gPayRequest.has("paymentDataRequest") and gPayRequest.has("environment")) {
-      isReadyToPayJson = gPayRequest.getJSONObject("paymentDataRequest")
-      environment = gPayRequest.getString("environment").uppercase()
+    try {
+      val intent = intent
+      val gPayRequest = JSONObject(intent.getStringExtra("gPayRequest").toString())
+      var isReadyToPayJson: JSONObject? = null
+      var environment = "TEST" // Default Value is Test
+      if (gPayRequest.has("paymentDataRequest") and gPayRequest.has("environment")) {
+        isReadyToPayJson = gPayRequest.getJSONObject("paymentDataRequest")
+        environment = gPayRequest.getString("environment").uppercase()
+      }
+
+      var test = false
+
+      if (isReadyToPayJson != null) {
+        test = model.fetchCanUseGooglePay(isReadyToPayJson, environment)
+      }
+
+      if (test && gPayRequest.has("paymentDataRequest")) {
+        requestPayment(gPayRequest.getJSONObject("paymentDataRequest"))
+      } else {
+        Log.e("GooglePay", "GPay PaymentRequest Not available")
+      }
+    } catch (e: Exception) {
+      Log.e("GooglePay", "Error in onCreate: ${e.message}")
+      finish()
     }
-
-    var test = false
-
-    if (isReadyToPayJson != null) {
-      test = model.fetchCanUseGooglePay(isReadyToPayJson, environment)
-    }
-
-    if (test && gPayRequest.has("paymentDataRequest")) {
-      requestPayment(gPayRequest.getJSONObject("paymentDataRequest"))
-    } else {
-      Log.e("GooglePay", "GPay PaymentRequest Not available")
-    }
-
   }
 
 
   private fun requestPayment(paymentDataRequestJson: JSONObject) {
-    val task = model.getLoadPaymentDataTask(paymentDataRequestJson)
+    try {
+      val task = model.getLoadPaymentDataTask(paymentDataRequestJson)
 
-    // Calling GPay UI for Payment with gPayRequestCode for onActivityResult
-    AutoResolveHelper.resolveTask(task, this, gPayRequestCode)
+      // Calling GPay UI for Payment with gPayRequestCode for onActivityResult
+      AutoResolveHelper.resolveTask(task, this, gPayRequestCode)
+    } catch (e: Exception) {
+      handleError("Failed to initiate Google Pay payment: ${e.message}")
+    }
   }
 
   private fun handlePaymentSuccess(paymentData: PaymentData) {
-    // Use MutableMap for dynamic data
     val map: MutableMap<String, Any?> = mutableMapOf()
     try {
+      // Use MutableMap for dynamic data
       val paymentInformation = paymentData.toJson()
       map["paymentMethodData"] = JSONObject(paymentInformation).toString()
+      getCallback()?.invoke(map)
     } catch (error: JSONException) {
       map["error"] = error.message
+      getCallback()?.invoke(map)
     }
-    getCallback()?.invoke(map)
     finish()
   }
 

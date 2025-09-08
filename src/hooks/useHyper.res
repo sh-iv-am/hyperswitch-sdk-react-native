@@ -25,9 +25,12 @@ let _initPaymentSession = async (params: initPaymentSessionParams): initPaymentS
   }
 }
 
-let parsePaymentSheetResult = (jsonString: string): presentPaymentSheetResult => {
+let parsePaymentSheetResult = (result: 'a): presentPaymentSheetResult => {
   try {
-    let parsed = Js.Json.parseExn(jsonString)
+    let parsed = switch Js.typeof(result) {
+    | "string" => Js.Json.parseExn(result)
+    | _ => result->Obj.magic
+    }
     {
       status: switch parsed->Js.Json.decodeObject->Option.flatMap(. obj => 
         obj->Js.Dict.get("status")->Option.flatMap(json => json->Js.Json.decodeString)

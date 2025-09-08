@@ -69,7 +69,8 @@
         @"from": @"rn",
         @"publishableKey": self.publishableKey ?: @"",
         @"clientSecret": self.clientSecret ?: @"",
-        @"configuration": configuration
+        @"configuration": configuration,
+        @"hyperParams": [HyperParams getHyperParams]
     } mutableCopy];
     
     if (self.customBackendUrl) {
@@ -93,19 +94,6 @@
         reactVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         
         // Set up completion handler for payment result
-        __weak HyperProvider *weakSelf = self;
-        reactVC.completionHandler = ^(NSDictionary *result) {
-            __strong HyperProvider *strongSelf = weakSelf;
-            if (strongSelf && strongSelf.paymentCallback) {
-                NSString *status = result[@"status"] ?: @"unknown";
-                NSString *message = result[@"message"] ?: @"Payment completed";
-                
-                PaymentResult *paymentResult = [[PaymentResult alloc] initWithStatus:status 
-                                                                             message:message];
-                strongSelf.paymentCallback(paymentResult);
-                strongSelf.paymentCallback = nil;
-            }
-        };
         
         [self.viewController presentViewController:reactVC animated:YES completion:nil];
     });

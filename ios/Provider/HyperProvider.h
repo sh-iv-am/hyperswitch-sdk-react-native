@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
+#import "HyperParams.h"
 @interface PaymentResult : NSObject
 @property (nonatomic, strong) NSString *status;
 @property (nonatomic, strong) NSString *message;

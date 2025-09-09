@@ -1,4 +1,5 @@
 #import <React/RCTViewComponentView.h>
+//#import <React/RCTComponentViewProtocol.h>
 #import <UIKit/UIKit.h>
 
 #ifndef ApplePayButtonNativeComponent_h
@@ -8,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ApplePayView : RCTViewComponentView
 @end
+
 
 NS_ASSUME_NONNULL_END
 

@@ -1,9 +1,10 @@
+// eslint disable
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5252;
 
 const colors = {
   reset: '\x1b[0m',
@@ -101,41 +102,83 @@ app.get('/health', (req, res) => {
 // Create Payment Intent
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const {
-      amount,
-      currency = 'USD',
-      customer_id,
-      description,
-      capture_method = 'automatic',
-      confirm = false,
-      metadata = {},
-    } = req.body;
+    // const {
+    //   // amount,
+    //   currency = 'USD',
+    //   // customer_id,
+    //   // description,
+    //   // capture_method = 'automatic',
+    //   // confirm = false,
+    //   // metadata = {},
+    // } = req.body;
 
     // Validate required fields
-    if (!amount) {
-      return res.status(400).json({
-        error: 'Missing required field: amount',
-      });
-    }
+    // if (!amount) {
+    //   return res.status(400).json({
+    //     error: 'Missing required field: amount',
+    //   });
+    // }
 
     // Prepare payment intent data
     const paymentData = {
-      amount: parseInt(amount), // Amount in smallest currency unit (cents)
-      currency: currency.toUpperCase(),
-      profile_id: PROFILE_ID,
-      capture_method,
-      confirm,
-      description: description || 'Payment via Hyperswitch',
-      metadata: {
-        ...metadata,
-        created_by: 'hyperswitch-client-core',
-        timestamp: new Date().toISOString(),
+      amount: 12347,
+      currency: 'USD',
+      capture_method: 'automatic',
+      authentication_type: 'three_ds',
+      setup_future_usage: 'on_session',
+      request_external_three_ds_authentication: false,
+      email: 'user@gmail.com',
+      description: 'Hello this is description',
+      shipping: {
+        address: {
+          line1: '1467',
+          line2: 'Harrison Street',
+          line3: 'Harrison Street',
+          city: 'San Fransico',
+          state: 'California',
+          zip: '94122',
+          country: 'US',
+          first_name: 'joseph',
+          last_name: 'Doe',
+        },
+        phone: {
+          number: '123456789',
+          country_code: '+1',
+        },
       },
+      connector_metadata: {
+        noon: {
+          order_category: 'applepay',
+        },
+      },
+      metadata: {
+        udf1: 'value1',
+        new_customer: 'true',
+        login_date: '2019-09-10T10:11:12Z',
+      },
+      billing: {
+        address: {
+          line1: '1467',
+          line2: 'Harrison Street',
+          line3: 'Harrison Street',
+          city: 'San Fransico',
+          state: 'California',
+          zip: '94122',
+          country: 'US',
+          first_name: 'joseph',
+          last_name: 'Doe',
+        },
+        phone: {
+          number: '8056594427',
+          country_code: '+91',
+        },
+      },
+      customer_id: 'hyperswitch_sdk_demo_id',
     };
 
     // Add customer_id if provided
-    if (customer_id) {
-      paymentData.customer_id = customer_id;
+    if (process.env.PROFILE_ID) {
+      paymentData.profile_id = process.env.PROFILE_ID;
     }
 
     logger.debug('Creating payment intent with data', paymentData);
@@ -153,9 +196,11 @@ app.post('/create-payment-intent', async (req, res) => {
     // Return the payment intent data
     res.json({
       success: true,
-      payment_intent: response.data,
+      // payment_intent: response.data,
+      clientSecret: response.data.client_secret,
       client_secret: response.data.client_secret,
       publishable_key: HYPERSWITCH_PUBLISHABLE_KEY,
+      publishableKey: HYPERSWITCH_PUBLISHABLE_KEY,
     });
   } catch (error) {
     logger.error(

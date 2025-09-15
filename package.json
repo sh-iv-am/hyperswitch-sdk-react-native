@@ -169,7 +169,6 @@
     },
     "ios": {
       "componentProvider": {
-        "HyperswitchSdkReactNativeView": "HyperswitchSdkReactNativeView",
         "ApplePayView": "ApplePayView"
       }
     }

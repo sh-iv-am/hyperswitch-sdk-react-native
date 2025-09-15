@@ -1,114 +1,53 @@
 #import "HyperswitchSdkReactNative.h"
-#import "HyperProvider.h"
-#import "RCTUtils.h"
 
-@interface HyperswitchSdkReactNative ()
-@property (nonatomic, strong, nullable) HyperProvider *hyperProvider;
-@property (nonatomic, copy, nullable) RCTPromiseResolveBlock presentPaymentSheetResolver;
-@property (nonatomic, copy, nullable) RCTPromiseRejectBlock presentPaymentSheetRejecter;
-@end
+#if __has_include("HyperswitchSdkReactNative-Swift.h")
+#import "HyperswitchSdkReactNative-Swift.h"
+#else
+// When using use_frameworks! :linkage => :static in Podfile
+#import <HyperswitchSdkReactNative/HyperswitchSdkReactNative-Swift.h>
+#endif
+
 
 @implementation HyperswitchSdkReactNative
 RCT_EXPORT_MODULE()
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        // Listen for payment sheet exit notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handlePaymentSheetExit:)
-                                                     name:@"HyperPaymentSheetExit"
-                                                   object:nil];
-    }
-    return self;
+//- (instancetype)init
+//{
+//  self = [super init];
+//  if (self) {
+//    StripeSdkImpl.shared.emitter = self;
+//  }
+//  return self;
+//}
+
+RCT_EXPORT_METHOD(initialise:(nonnull NSString *)publishableKey
+                  customBackendUrl:(nullable NSString *)customBackendUrl
+                  customLogUrl:(nullable NSString *)customLogUrl
+                  customParams:(nullable NSDictionary *)customParams
+                  resolve:(nonnull RCTPromiseResolveBlock)resolve
+                  reject:(nonnull RCTPromiseRejectBlock)reject) {
+  [HyperswitchModule.shared initialiseWithPublishableKey:publishableKey customBackendUrl:customBackendUrl customLogUrl:customLogUrl customParams:customParams resolve:resolve reject:reject];
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+RCT_EXPORT_METHOD(initPaymentSession:(nonnull NSString *)paymentIntentClientSecret
+                  resolve:(nonnull RCTPromiseResolveBlock)resolve
+                  reject:(nonnull RCTPromiseRejectBlock)reject) {
+  
+  [HyperswitchModule.shared initPaymentSessionWithpaymentIntentClientSecret:paymentIntentClientSecret resolve:resolve reject:reject];
 }
 
-- (void)handlePaymentSheetExit:(NSNotification *)notification {
-    NSDictionary *result = notification.userInfo;
-    if (result) {
-        [self exitPaymentSheet:result];
-    }
+RCT_EXPORT_METHOD(presentPaymentSheet:(nonnull NSDictionary *)configuration
+                  resolve:(nonnull RCTPromiseResolveBlock)resolve
+                  reject:(nonnull RCTPromiseRejectBlock)reject)
+{
+  [HyperswitchModule.shared presentPaymentSheetWithConfiguration:configuration resolver:resolve rejecter:reject];
 }
 
-- (void)initialise:(NSString *)publishableKey
-  customBackendUrl:(nullable NSString *)customBackendUrl
-     customLogUrl:(nullable NSString *)customLogUrl
-     customParams:(nullable NSDictionary *)customParams
-          resolve:(RCTPromiseResolveBlock)resolve
-           reject:(RCTPromiseRejectBlock)reject {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-//      UIViewController *rootViewController = RCTPresentedViewController();
-        
-        if (rootViewController) {
-            self.hyperProvider = [[HyperProvider alloc] initWithViewController:rootViewController];
-            [self.hyperProvider initialiseWithPublishableKey:publishableKey
-                                             customBackendUrl:customBackendUrl
-                                                customLogUrl:customLogUrl
-                                                customParams:customParams];
-            resolve([NSNull null]);
-        } else {
-            reject(@"INITIALIZATION_ERROR", @"Root view controller is nil", nil);
-        }
-    });
-}
-
-- (void)initPaymentSession:(NSString *)paymentIntentClientSecret
-                   resolve:(RCTPromiseResolveBlock)resolve
-                    reject:(RCTPromiseRejectBlock)reject {
-    
-    if (self.hyperProvider) {
-        [self.hyperProvider initPaymentSessionWithClientSecret:paymentIntentClientSecret];
-        resolve([NSNull null]);
-    } else {
-        reject(@"INIT_ERROR", @"HyperProvider not initialized", nil);
-    }
-}
-
-- (void)presentPaymentSheet:(NSDictionary *)configuration
-                    resolve:(RCTPromiseResolveBlock)resolve
-                     reject:(RCTPromiseRejectBlock)reject {
-    
-    if (self.hyperProvider) {
-        // Store the promise for later resolution
-        self.presentPaymentSheetResolver = resolve;
-        self.presentPaymentSheetRejecter = reject;
-        
-        [self.hyperProvider presentPaymentSheetWithConfiguration:configuration
-                                                         callback:^(PaymentResult *result) {
-        }];
-    } else {
-        reject(@"PRESENT_ERROR", @"HyperProvider not initialized", nil);
-    }
-}
-
-- (void)exitPaymentSheet:(NSDictionary *)result {
-    if (self.presentPaymentSheetResolver) {
-        NSString *status = result[@"status"];
-        if ([status isEqualToString:@"succeeded"] || [status isEqualToString:@"cancelled"]) {
-            self.presentPaymentSheetResolver(result);
-        } else {
-            NSString *message = result[@"message"] ?: @"Payment failed";
-            if (self.presentPaymentSheetRejecter) {
-                self.presentPaymentSheetRejecter(@"PAYMENT_ERROR", message, nil);
-            }
-        }
-        
-        // Clear the stored promises
-        self.presentPaymentSheetResolver = nil;
-        self.presentPaymentSheetRejecter = nil;
-    }
-}
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+(const facebook::react::ObjCTurboModule::InitParams &)params
 {
-    return std::make_shared<facebook::react::NativeHyperswitchSdkReactNativeSpecJSI>(params);
+  return std::make_shared<facebook::react::NativeHyperswitchSdkReactNativeSpecJSI>(params);
 }
 
 @end

@@ -83,8 +83,12 @@ type colors = {
 
 type defaultColors = {light?: colors, dark?: colors}
 type colorType =
-  | Colors(colors)
-  | DefaultColors(defaultColors)
+  {
+    light ?: colors,
+    dark?: colors,
+    ...colors
+  }
+ 
 
 // IOS Specific
 type offsetType = {

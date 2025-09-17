@@ -26,6 +26,7 @@ let _initPaymentSession = async (params: initPaymentSessionParams): initPaymentS
 }
 
 let parsePaymentSheetResult = (result: 'a): presentPaymentSheetResult => {
+  Console.log2("Parsing payment sheet result: ", result)
   try {
     let parsed = switch Js.typeof(result) {
     | "string" => Js.Json.parseExn(result)
@@ -60,10 +61,26 @@ let _presentPaymentSheet = async (params: presentPaymentSheetParams): presentPay
     result->parsePaymentSheetResult
   } catch {
   | Exn.Error(obj) =>
-    switch Exn.message(obj) {
-    | Some(error) => {
-      getError(~error)}
-    | None => getError()
+    // Check if the error is an object error - if so, return the error
+    switch Js.typeof(obj) {
+    | "object" =>
+      // Try to parse the object error
+      try {
+        let errorObj = obj->Obj.magic
+        let parsedError = errorObj->parsePaymentSheetResult
+        parsedError
+      } catch {
+      | _ =>
+        switch Exn.message(obj) {
+        | Some(error) => getError(~error)
+        | None => getError()
+        }
+      }
+    | _ =>
+      switch Exn.message(obj) {
+      | Some(error) => getError(~error)
+      | None => getError()
+      }
     }
   | _ => getError()
   }

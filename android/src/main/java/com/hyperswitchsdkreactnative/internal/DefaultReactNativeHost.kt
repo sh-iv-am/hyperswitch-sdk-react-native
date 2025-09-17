@@ -37,46 +37,62 @@ import com.facebook.react.uimanager.ViewManagerResolver
  */
 internal abstract class DefaultReactNativeHost
 protected constructor(
-    application: Application,
+  application: Application,
 ) : ReactNativeHost(application) {
 
   override fun getReactPackageTurboModuleManagerDelegateBuilder():
-      ReactPackageTurboModuleManagerDelegate.Builder? =
-      if (isNewArchEnabled) {
-        DefaultTurboModuleManagerDelegate.Builder()
-      } else {
-        error(
-            "Overriding isNewArchEnabled to false is not supported anymore since React Native 0.82. Please check your MainApplication.kt file, and remove the override for `isNewArchEnabled`.")
-      }
+    ReactPackageTurboModuleManagerDelegate.Builder? =
+    if (isNewArchEnabled) {
+      DefaultTurboModuleManagerDelegate.Builder()
+    } else {
+      error(
+        "Overriding isNewArchEnabled to false is not supported anymore since React Native 0.82. Please check your MainApplication.kt file, and remove the override for `isNewArchEnabled`."
+      )
+    }
 
   override fun getUIManagerProvider(): UIManagerProvider? =
-      if (isNewArchEnabled) {
-        UIManagerProvider { reactApplicationContext: ReactApplicationContext ->
-          val componentFactory = ComponentFactory()
-          DefaultComponentsRegistry.register(componentFactory)
+    if (isNewArchEnabled) {
+      UIManagerProvider { reactApplicationContext: ReactApplicationContext ->
+        val componentFactory = ComponentFactory()
+        DefaultComponentsRegistry.register(componentFactory)
 
-          val viewManagerRegistry =
-              if (lazyViewManagersEnabled) {
-                ViewManagerRegistry(
-                    object : ViewManagerResolver {
-                      override fun getViewManager(viewManagerName: String) =
-                          reactInstanceManager.createViewManager(viewManagerName)
+        val viewManagerRegistry =
+          if (lazyViewManagersEnabled) {
+            ViewManagerRegistry(
+              object : ViewManagerResolver {
+                override fun getViewManager(viewManagerName: String) =
+                  reactInstanceManager.createViewManager(viewManagerName)
 
-                      override fun getViewManagerNames() = reactInstanceManager.viewManagerNames
-                    })
-              } else {
-                ViewManagerRegistry(
-                    reactInstanceManager.getOrCreateViewManagers(reactApplicationContext))
-              }
+                override fun getViewManagerNames() = reactInstanceManager.viewManagerNames
+              })
+          } else {
+            ViewManagerRegistry(
+              reactInstanceManager.getOrCreateViewManagers(reactApplicationContext)
+            )
+          }
 
-          // val reactNativeConfig = ReactNativeConfig.DEFAULT_CONFIG
-          FabricUIManagerProviderImpl(componentFactory, viewManagerRegistry)
-              .createUIManager(reactApplicationContext)
+        try {
+          FabricUIManagerProviderImpl(
+            componentFactory,
+            com.facebook.react.fabric.ReactNativeConfig.DEFAULT_CONFIG,
+            viewManagerRegistry
+          )
+        } catch {
+          FabricUIManagerProviderImpl(
+            componentFactory, viewManagerRegistry
+          )
+            .createUIManager(reactApplicationContext)
         }
-      } else {
-        error(
-            "Overriding isNewArchEnabled to false is not supported anymore since React Native 0.82. Please check your MainApplication.kt file, and remove the override for `isNewArchEnabled`.")
+
+//          FabricUIManagerProviderImpl(
+//            componentFactory, com.facebook.react.fabric.ReactNativeConfig.DEFAULT_CONFIG, viewManagerRegistry)
+
       }
+    } else {
+      error(
+        "Overriding isNewArchEnabled to false is not supported anymore since React Native 0.82. Please check your MainApplication.kt file, and remove the override for `isNewArchEnabled`."
+      )
+    }
 
   override fun clear() {
     super.clear()
@@ -101,8 +117,8 @@ protected constructor(
    * load the JSC engine, and fail if not found.
    */
   @Deprecated(
-      "Setting isHermesEnabled inside `ReactNativeHost` is deprecated and this field will be ignored. If this field is set to true, you can safely remove it. If this field is set to false, please follow the setup on https://github.com/react-native-community/javascriptcore to continue using JSC",
-      ReplaceWith(""),
+    "Setting isHermesEnabled inside `ReactNativeHost` is deprecated and this field will be ignored. If this field is set to true, you can safely remove it. If this field is set to false, please follow the setup on https://github.com/react-native-community/javascriptcore to continue using JSC",
+    ReplaceWith(""),
   )
   protected open val isHermesEnabled: Boolean
     get() = true
@@ -114,8 +130,8 @@ protected constructor(
    */
   @UnstableReactNativeAPI
   internal fun toReactHost(
-      context: Context,
-      jsRuntimeFactory: JSRuntimeFactory? = null,
+    context: Context,
+    jsRuntimeFactory: JSRuntimeFactory? = null,
   ): ReactHost {
     val concreteJSRuntimeFactory = jsRuntimeFactory ?: HermesInstance()
     return DefaultReactHost.getDefaultReactHost(

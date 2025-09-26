@@ -69,8 +69,8 @@ protected constructor(
                     reactInstanceManager.getOrCreateViewManagers(reactApplicationContext))
               }
 
-          // val reactNativeConfig = ReactNativeConfig.DEFAULT_CONFIG
-          FabricUIManagerProviderImpl(componentFactory, viewManagerRegistry)
+          FabricUIManagerProviderImpl(
+                  componentFactory,  viewManagerRegistry)
               .createUIManager(reactApplicationContext)
         }
       } else {

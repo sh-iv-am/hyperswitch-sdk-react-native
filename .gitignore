@@ -9,6 +9,9 @@
 .vscode/
 jsconfig.json
 
+
+react-native-debug/*
+
 # Xcode
 #
 build/

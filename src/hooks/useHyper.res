@@ -3,13 +3,15 @@ open NativeHyperswitchSdk
 let getError: (~error: string=?) => presentPaymentSheetResult = (
   ~error="Unknown error occurred while presenting payment sheet",
 ) => {
-  status: Failed,
-  message: "failed",
-  error,
+  {
+    error: {
+      code: "failed",
+      message: error,
+    },
+  }
 }
 
 let _initPaymentSession = async (params: initPaymentSessionParams): initPaymentSessionResult => {
-  
   try {
     await nativeHyperswitchSdk.initPaymentSession(
       ~paymentIntentClientSecret=params.paymentIntentClientSecret->Option.getOr(""),
@@ -24,6 +26,13 @@ let _initPaymentSession = async (params: initPaymentSessionParams): initPaymentS
   | _ => {error: "Unexpected error occurred while initializing payment sheet"}
   }
 }
+let getData = (data, ~key : string, ~fallback : string)=>{
+  data
+  ->Option.flatMap(obj =>
+        obj->Js.Dict.get(key)->Option.flatMap(json => json->Js.Json.decodeString)
+      )
+      ->Option.getOr(fallback)
+}
 
 let parsePaymentSheetResult = (result: 'a): presentPaymentSheetResult => {
   try {
@@ -31,23 +40,39 @@ let parsePaymentSheetResult = (result: 'a): presentPaymentSheetResult => {
     | "string" => Js.Json.parseExn(result)
     | _ => result->Obj.magic
     }
-    {
-      status: switch parsed->Js.Json.decodeObject->Option.flatMap(. obj => 
-        obj->Js.Dict.get("status")->Option.flatMap(json => json->Js.Json.decodeString)
-      ) {
-      | Some("succeeded") => Completed
-      | Some("cancelled") => Canceled
-      | Some("failed") | _ => Failed
-      },
-      message: parsed->Js.Json.decodeObject->Option.flatMap(. obj => 
-        obj->Js.Dict.get("message")->Option.flatMap(json => json->Js.Json.decodeString)
-      )->Option.getOr(""),
-      error: ?parsed->Js.Json.decodeObject->Option.flatMap(. obj => 
-        obj->Js.Dict.get("error")->Option.flatMap(json => json->Js.Json.decodeString)
-      ),
-      \"type": ?parsed->Js.Json.decodeObject->Option.flatMap(. obj => 
-        obj->Js.Dict.get("type")->Option.flatMap(json => json->Js.Json.decodeString)
-      ),
+    let decodedObject = parsed->Js.Json.decodeObject
+
+    let status =
+      decodedObject->getData(~key="status", ~fallback="failed")
+    let errorMessage =
+      decodedObject->getData(~key="error", ~fallback="")
+    
+
+    let code =
+      decodedObject->getData(~key="code", ~fallback="")
+
+    let typeData =
+      decodedObject->getData(~key="type", ~fallback="")
+      
+    let message =
+      decodedObject
+      ->getData(~key="message", ~fallback="failed")
+
+    let paymentResult = {
+      status,
+      message,
+      error: errorMessage,
+      \"type": typeData,
+    }
+    let error = {
+      code,
+      message: errorMessage,
+    }
+
+    if errorMessage != "" {
+      {error, paymentResult}
+    } else {
+      {paymentResult: paymentResult}
     }
   } catch {
   | _ => getError(~error="Failed to parse payment sheet result")
@@ -60,10 +85,26 @@ let _presentPaymentSheet = async (params: presentPaymentSheetParams): presentPay
     result->parsePaymentSheetResult
   } catch {
   | Exn.Error(obj) =>
-    switch Exn.message(obj) {
-    | Some(error) => {
-      getError(~error)}
-    | None => getError()
+    // Check if the error is an object error - if so, return the error
+    switch Js.typeof(obj) {
+    | "object" =>
+      // Try to parse the object error
+      try {
+        let errorObj = obj->Obj.magic
+        let parsedError = errorObj->parsePaymentSheetResult
+        parsedError
+      } catch {
+      | _ =>
+        switch Exn.message(obj) {
+        | Some(error) => getError(~error)
+        | None => getError()
+        }
+      }
+    | _ =>
+      switch Exn.message(obj) {
+      | Some(error) => getError(~error)
+      | None => getError()
+      }
     }
   | _ => getError()
   }
@@ -80,7 +121,7 @@ let useHyper = () => {
   let isReady = contextData.isInitialized && contextData.error->Belt.Option.isNone
 
   let initPaymentSession = React.useCallback0((params: initPaymentSessionParams) => {
-     _initPaymentSession(params)
+    _initPaymentSession(params)
   })
 
   let presentPaymentSheet = React.useCallback1((params: presentPaymentSheetParams) => {

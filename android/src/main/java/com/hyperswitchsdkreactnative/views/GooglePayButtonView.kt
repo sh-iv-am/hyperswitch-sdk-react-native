@@ -13,7 +13,7 @@ import com.google.android.gms.wallet.button.PayButton
 @SuppressLint("ViewConstructor")
 class GooglePayButtonView(private val context: ThemedReactContext) : FrameLayout(context) {
 
-  lateinit var allowedPaymentMethods: String
+  var allowedPaymentMethods: String = ""
   var type = ButtonConstants.ButtonType.PLAIN
   var theme = ButtonConstants.ButtonTheme.DARK
   var cornerRadius = 10
@@ -32,7 +32,7 @@ class GooglePayButtonView(private val context: ThemedReactContext) : FrameLayout
     val googlePayButton = PayButton(context)
 
     val options = ButtonOptions.newBuilder()
-      .setAllowedPaymentMethods(allowedPaymentMethods)
+      .setAllowedPaymentMethods(allowedPaymentMethods )
       .setButtonType(type)
       .setButtonTheme(theme)
       .setCornerRadius(PixelUtil.toPixelFromDIP(this.cornerRadius.toDouble()).toInt())

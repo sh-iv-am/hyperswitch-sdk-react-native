@@ -23,11 +23,23 @@ type status =
   | @as("Failed") Failed
 
 @genType
-type presentPaymentSheetResult = {
-  status: status,
+type paymentResult = {
+  status: string,
   message: string,
   error?: string,
   \"type"?: string,
+}
+
+@genType
+type error = {
+  code?: string,
+  message?: string
+}
+
+@genType
+type presentPaymentSheetResult = {
+  error?: error,
+  paymentResult?: paymentResult
 }
 
 @genType

@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { View, Button, Platform, StyleSheet, Text } from 'react-native';
+import { useState, useEffect } from 'react';
+import {
+  View,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import {
   useHyper,
   type InitPaymentSessionParams,
@@ -11,24 +18,18 @@ import {
 export default function PaymentScreen() {
   const { initPaymentSession, presentPaymentSheet } = useHyper();
   const [status, setStatus] = useState<string | null | undefined>(null);
-  const [isReloadNeeded, setIsReloadNeeded] = useState(false);
   const [message, setMessage] = useState<string | null | undefined>(null);
-  const createPaymentIntent = async (): Promise<string> => {
+  const [baseURL, setBaseURL] = useState<string>(
+    Platform.OS === 'android' ? 'http://10.0.2.2:5252' : 'http://localhost:5252'
+  );
+  const createPaymentIntent = async (): Promise<string | undefined> => {
     try {
-      const baseUrl =
-        Platform.OS === 'android'
-          ? 'http://10.0.2.2:5252'
-          : 'http://localhost:5252';
-      const response = await fetch(`${baseUrl}/create-payment-intent`, {
+      const response = await fetch(`${baseURL}/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          amount: 2000, // $20.00 in cents
-          currency: 'USD',
-          description: 'Example payment',
-        }),
+        body: JSON.stringify({}),
       });
 
       const data = await response.json();
@@ -40,7 +41,8 @@ export default function PaymentScreen() {
       return data.client_secret;
     } catch (error) {
       console.error('Error creating payment intent:', error);
-      throw error;
+      return undefined;
+      // throw error;
     }
   };
   const setup = async (): Promise<void> => {
@@ -54,20 +56,17 @@ export default function PaymentScreen() {
       const result: InitPaymentSessionResult = await initPaymentSession(params);
 
       if (result.error) {
-        setIsReloadNeeded(true);
         setStatus(`Initialization failed: ${result.error}`);
         console.error('Payment session initialization failed:', result.error);
       } else {
-        setIsReloadNeeded(false);
         setMessage('');
-        setStatus('');
+        setStatus('Ready to checkout');
       }
     } catch (error) {
       console.error('Setup failed:', error);
     }
   };
-
-  React.useEffect(() => {
+  useEffect(() => {
     setup();
   }, [initPaymentSession]);
 
@@ -76,33 +75,75 @@ export default function PaymentScreen() {
       const options: PresentPaymentSheetParams = {
         appearance: {
           theme: 'Dark',
+          // colors: {
+          //   background: '#452061',
+          //   componentBackground: 'black',
+          //   componentText: 'white',
+          //   primary: '#77DF95',
+          //   primaryText: 'white',
+          // },
+          // primaryButton: {
+          //   shapes: {
+          //     borderRadius: 36,
+          //     shadow: {
+          //       color: '#378C46',
+          //       opacity: 0.5,
+          //       blurRadius: 10,
+          //       offset: {
+          //         x: 0,
+          //         y: 4,
+          //       },
+          //     },
+          //   },
+          // },
+          // shapes: {
+          //   shadow: {
+          //     color: '#378C46',
+          //     opacity: 1,
+          //     blurRadius: 10,
+          //     offset: {
+          //       x: 0,
+          //       y: 6,
+          //     },
+          //   },
+          // },
         },
+        // primaryButtonLabel: 'Complete Purchase',
       };
 
       const result: PresentPaymentSheetResult =
         await presentPaymentSheet(options);
-      console.log('manideep', result);
-      if (result.error) {
-        console.error('Payment failed:', JSON.stringify(result.error));
-        setStatus(`Payment failed: ${JSON.stringify(result.error)}`);
+      let { error, paymentResult } = result;
+      if (error) {
+        console.error('Payment failed:', JSON.stringify(error));
+        setStatus(`Payment failed: ${JSON.stringify(error)}`);
       } else {
-        setStatus(result.status);
-        setMessage(`${result.message}`);
-        console.log('Payment completed with status:', result.status);
-        console.log('Message:', result.message);
+        setStatus(paymentResult?.status);
+        setMessage(`${paymentResult?.message}`);
+        console.log('Payment completed with status:', paymentResult?.status);
+        console.log('Message:', paymentResult?.message);
       }
     } catch (error: any) {
       setMessage(`${error.message}`);
       setStatus(`Checkout failed: ${JSON.stringify(error.message)}`);
       console.error('Checkout failed:', error);
     }
-    setIsReloadNeeded(true);
   };
 
   return (
     <View style={styles.container}>
-      {!isReloadNeeded && <Button title="Checkout" onPress={checkout} />}
-      {isReloadNeeded && <Button title="Restart" onPress={setup} />}
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter base URL"
+        value={baseURL}
+        onChangeText={(text) => setBaseURL(text)}
+      />
+      <TouchableOpacity style={styles.button} onPress={setup}>
+        <Text style={{ color: 'white' }}>Reload client Secret</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={checkout}>
+        <Text style={{ color: 'white' }}>Checkout</Text>
+      </TouchableOpacity>
       {message && <Text>{message}</Text>}
       <Text style={styles.statusText}>{status}</Text>
     </View>
@@ -110,6 +151,19 @@ export default function PaymentScreen() {
 }
 
 const styles = StyleSheet.create({
+  textInput: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: 48,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    borderRadius: 8,
+    fontSize: 24,
+    paddingHorizontal: 8,
+    width: '100%',
+    gap: 20,
+  },
   container: {
     height: '100%',
     alignItems: 'center',
@@ -121,5 +175,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'gray',
     textAlign: 'center',
+  },
+  button: {
+    width: '100%',
+    height: 48,
+    backgroundColor: '#0355c9ff',
+    alignItems: 'center',
+    color: 'white',
+    justifyContent: 'center',
+    borderRadius: 8,
+    marginBottom: 12,
   },
 });

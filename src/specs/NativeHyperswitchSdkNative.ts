@@ -7,9 +7,6 @@ export interface Spec extends TurboModule {
 
   // Apple Pay methods
   launchApplePay(requestObj: string, callback: (result: Object) => void): void;
-  startApplePay(requestObj: string, callback: (result: Object) => void): void;
-  presentApplePay(requestObj: string, callback: (result: Object) => void): void;
-
   // Google Pay method
   launchGPay(requestObj: string, callback: (result: Object) => void): void;
 

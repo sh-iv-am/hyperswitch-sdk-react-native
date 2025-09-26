@@ -38,17 +38,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
     callback.invoke("Apple Pay not implemented")
   }
 
-  @ReactMethod
-  override fun startApplePay(requestObj: String, callback: Callback) {
-//    Log.d(NAME, "startApplePay called")
-    callback.invoke("Apple Pay start not implemented")
-  }
 
-  @ReactMethod
-  override fun presentApplePay(requestObj: String, callback: Callback) {
-//    Log.d(NAME, "presentApplePay called")
-    callback.invoke("Apple Pay present not implemented")
-  }
 
   @ReactMethod
   override fun launchGPay(requestObj: String, callback: Callback) {
@@ -74,6 +64,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   override fun exitPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
 //    Log.d(NAME, "exitPaymentsheet called $result")
+    resetView()
     try {
 //      val jsonObject = JSONObject(result)
       resolvePromise(result)
@@ -81,7 +72,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
       Log.e(NAME, "Failed to parse JSON result: $result", e)
       resolvePromise(result)
     }
-    resetView()
+
   }
 
   @ReactMethod
@@ -150,8 +141,6 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
     }
     return writableMap
   }
-
-
 
   companion object {
     const val NAME = "HyperModules"

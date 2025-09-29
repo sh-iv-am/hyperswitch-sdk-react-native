@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Platform,
@@ -22,7 +22,9 @@ export default function PaymentScreen() {
   const [baseURL, setBaseURL] = useState<string>(
     Platform.OS === 'android' ? 'http://10.0.2.2:5252' : 'http://localhost:5252'
   );
-  const createPaymentIntent = async (): Promise<string | undefined> => {
+  const createPaymentIntent = useCallback(async (): Promise<
+    string | undefined
+  > => {
     try {
       const response = await fetch(`${baseURL}/create-payment-intent`, {
         method: 'POST',
@@ -44,8 +46,8 @@ export default function PaymentScreen() {
       return undefined;
       // throw error;
     }
-  };
-  const setup = async (): Promise<void> => {
+  }, [baseURL]);
+  const setup = useCallback(async (): Promise<void> => {
     try {
       const paymentIntent = await createPaymentIntent();
 
@@ -65,10 +67,10 @@ export default function PaymentScreen() {
     } catch (error) {
       console.error('Setup failed:', error);
     }
-  };
+  }, [initPaymentSession, createPaymentIntent]);
   useEffect(() => {
     setup();
-  }, [initPaymentSession]);
+  }, [setup]);
 
   const checkout = async (): Promise<void> => {
     try {
@@ -139,10 +141,10 @@ export default function PaymentScreen() {
         onChangeText={(text) => setBaseURL(text)}
       />
       <TouchableOpacity style={styles.button} onPress={setup}>
-        <Text style={{ color: 'white' }}>Reload client Secret</Text>
+        <Text style={styles.buttonText}>Reload client Secret</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={checkout}>
-        <Text style={{ color: 'white' }}>Checkout</Text>
+        <Text style={styles.buttonText}>Checkout</Text>
       </TouchableOpacity>
       {message && <Text>{message}</Text>}
       <Text style={styles.statusText}>{status}</Text>
@@ -185,5 +187,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     marginBottom: 12,
+  },
+  buttonText: {
+    color: 'white',
   },
 });

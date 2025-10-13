@@ -49,11 +49,11 @@ public class HyperswitchModule: NSObject {
       self.paymentSession?.presentPaymentSheetWithParams(viewController: vc, params: configuration, completion: { result in
         switch result {
         case .completed(let data):
-          resolve(["type": "completed", "message": data])
+          resolve(["status": "completed", "message": data])
         case .failed(let error as NSError):
-          resolve(["type": "failed", "message": "Payment failed: \(error.userInfo["message"] ?? "Failed")"])
+          resolve(["status": "failed", "code": error.domain, "message": "\(error.userInfo["message"] ?? "Failed")"])
         case .canceled(let data):
-          resolve(["type": "cancelled", "message": data])
+          resolve(["status": "cancelled", "message": data])
         }
       })
     }

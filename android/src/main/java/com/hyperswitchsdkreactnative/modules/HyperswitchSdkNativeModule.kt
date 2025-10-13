@@ -63,10 +63,8 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun exitPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
-//    Log.d(NAME, "exitPaymentsheet called $result")
-    resetView()
     try {
-//      val jsonObject = JSONObject(result)
+      resetView()
       resolvePromise(result)
     } catch (e: JSONException) {
       Log.e(NAME, "Failed to parse JSON result: $result", e)

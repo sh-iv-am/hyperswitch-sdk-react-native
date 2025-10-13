@@ -99,62 +99,49 @@ app.get('/health', (req, res) => {
   });
 });
 
+let paymentDataDefault = {
+  amount: 15100,
+  currency: 'USD',
+  capture_method: 'automatic',
+  authentication_type: 'three_ds',
+  setup_future_usage: 'on_session',
+  request_external_three_ds_authentication: false,
+  email: 'user@gmail.com',
+  description: 'Hello this is description',
+  connector_metadata: {
+    noon: {
+      order_category: 'applepay',
+    },
+  },
+  metadata: {
+    udf1: 'value1',
+    new_customer: 'true',
+    login_date: '2019-09-10T10:11:12Z',
+  },
+  billing: {
+    address: {
+      line1: '1467',
+      line2: 'Harrison Street',
+      line3: 'Harrison Street',
+      city: 'San Fransico',
+      state: 'California',
+      zip: '94122',
+      country: 'US',
+      first_name: 'CL',
+      last_name: 'BRWA',
+    },
+    phone: {
+      number: '8056594427',
+      country_code: '+91',
+    },
+  },
+  customer_id: 'hyperswitch_sdk_demo_id_2345tdnj',
+};
+
 app.get('/create-payment-intent', async (req, res) => {
   // Prepare payment intent data
   const paymentData = {
-    amount: 15100,
-    currency: 'EUR',
-    capture_method: 'automatic',
-    authentication_type: 'three_ds',
-    setup_future_usage: 'on_session',
-    request_external_three_ds_authentication: false,
-    email: 'user@gmail.com',
-    description: 'Hello this is description',
-    shipping: {
-      address: {
-        line1: '1467',
-        line2: 'Harrison Street',
-        line3: 'Harrison Street',
-        city: 'San Fransico',
-        state: 'California',
-        zip: '94122',
-        country: 'US',
-        first_name: 'joseph',
-        last_name: 'Doe',
-      },
-      phone: {
-        number: '123456789',
-        country_code: '+1',
-      },
-    },
-    connector_metadata: {
-      noon: {
-        order_category: 'applepay',
-      },
-    },
-    metadata: {
-      udf1: 'value1',
-      new_customer: 'true',
-      login_date: '2019-09-10T10:11:12Z',
-    },
-    billing: {
-      address: {
-        line1: '1467',
-        line2: 'Harrison Street',
-        line3: 'Harrison Street',
-        city: 'San Fransico',
-        state: 'California',
-        zip: '94122',
-        country: 'US',
-        first_name: 'joseph',
-        last_name: 'Doe',
-      },
-      phone: {
-        number: '8056594427',
-        country_code: '+91',
-      },
-    },
-    customer_id: 'hyperswitch_sdk_demo_id_2345tdnj',
+    ...paymentDataDefault,
     ...req.body,
   };
 
@@ -190,76 +177,7 @@ app.post('/create-payment-intent', async (req, res) => {
   try {
     // Prepare payment intent data
     const paymentData = {
-      amount: 1354,
-      currency: 'USD',
-      capture_method: 'automatic',
-      authentication_type: 'no_three_ds',
-      setup_future_usage: 'on_session',
-      request_external_three_ds_authentication: false,
-      // email: 'user@gmail.com',
-      browser_info: {
-        user_agent:
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
-        accept_header:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        language: 'en-US',
-        color_depth: 24,
-        screen_height: 1117,
-        screen_width: 1728,
-        time_zone: -330,
-        java_enabled: true,
-        java_script_enabled: true,
-        device_model: 'Macintosh',
-        os_type: 'macOS',
-        os_version: '10.15.7',
-      },
-      description: 'Hello this is description',
-      shipping: {
-        address: {
-          line1: '1467',
-          line2: 'Harrison Street',
-          line3: 'Harrison Street',
-          city: 'San Fransico',
-          state: 'California',
-          zip: '94122',
-          country: 'US',
-          first_name: 'joseph',
-          last_name: 'Doe',
-        },
-        phone: {
-          number: '123456789',
-          country_code: '+1',
-        },
-      },
-      connector_metadata: {
-        noon: {
-          order_category: 'applepay',
-        },
-      },
-      metadata: {
-        udf1: 'value1',
-        new_customer: 'true',
-        login_date: '2019-09-10T10:11:12Z',
-      },
-      // billing: {
-      //   email: 'user@gmail.com',
-      //   address: {
-      //     line1: '1467',
-      //     line2: 'Harrison Street',
-      //     line3: 'Harrison Street',
-      //     city: 'San Fransico',
-      //     state: 'California',
-      //     zip: '94122',
-      //     country: 'US',
-      //     first_name: 'joseph',
-      //     last_name: 'Doe',
-      //   },
-      //   phone: {
-      //     number: '8056594427',
-      //     country_code: '+91',
-      //   },
-      // },
-      customer_id: 'hyperswitch_sdk_demo_id_2345ty',
+      ...paymentDataDefault,
       ...req.body,
     };
 

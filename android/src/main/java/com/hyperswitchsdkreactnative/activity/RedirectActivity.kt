@@ -1,4 +1,5 @@
 package com.hyperswitchsdkreactnative.activity
+
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import com.proyecto26.inappbrowser.ChromeTabsDismissedEvent
@@ -30,12 +31,9 @@ class RedirectActivity : AppCompatActivity() {
     finish()
   }
 
-
-
   // Override onNewIntent to update the intent when a new intent is received
-//  override fun onNewIntent(intent: Intent?) {
-//    super.onNewIntent(intent)
-//    setIntent(intent) // Set the new intent
-//  }
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent) // Set the new intent
+  }
 }
-

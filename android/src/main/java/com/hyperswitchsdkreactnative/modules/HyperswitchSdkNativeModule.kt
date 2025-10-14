@@ -3,11 +3,8 @@ package com.hyperswitchsdkreactnative.modules
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactMethod
-import android.util.Log
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
-import org.json.JSONObject
 import org.json.JSONException
 import com.hyperswitchsdkreactnative.NativeHyperswitchSdkNativeSpec
 import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule.Companion.resetView
@@ -39,7 +36,6 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
   }
 
 
-
   @ReactMethod
   override fun launchGPay(requestObj: String, callback: Callback) {
     currentActivity?.let {
@@ -67,7 +63,7 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
       resetView()
       resolvePromise(result)
     } catch (e: JSONException) {
-      Log.e(NAME, "Failed to parse JSON result: $result", e)
+      // Log.e(NAME, "Failed to parse JSON result: $result", e)
       resolvePromise(result)
     }
 

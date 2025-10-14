@@ -16,9 +16,7 @@ import com.hyperswitchsdkreactnative.gpay.GooglePayCallbackManager.getCallback
 class GooglePayActivity : AppCompatActivity() {
 
   private val gPayRequestCode = 1212
-
   private val model: GooglePayViewModel by viewModels()
-
 
   @SuppressLint("SuspiciousIndentation")
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +76,7 @@ class GooglePayActivity : AppCompatActivity() {
 
   private fun handleError(message: String) {
     val map: MutableMap<String, Any?> = mutableMapOf()
-    map["error"]  =  message
+    map["error"] = message
     getCallback()?.invoke(map)
     finish()
   }
@@ -92,6 +90,7 @@ class GooglePayActivity : AppCompatActivity() {
         RESULT_OK -> data?.let { intent ->
           PaymentData.getFromIntent(intent)?.let(::handlePaymentSuccess)
         }
+
         RESULT_CANCELED -> handleError("Cancel")
         else -> handleError("Failure")
       }

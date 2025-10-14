@@ -22,7 +22,9 @@ class GooglePayViewModel(application: Application) : AndroidViewModel(applicatio
     val task = paymentsClient.isReadyToPay(request)
     task.addOnCompleteListener { completedTask ->
       try {
-        Log.d("GPAY-TEST 1", "GPAY CAN BE USED ${completedTask.getResult(ApiException::class.java)}")
+        Log.d(
+          "GPAY-TEST 1", "GPAY CAN BE USED ${completedTask.getResult(ApiException::class.java)}"
+        )
       } catch (exception: ApiException) {
         Log.w("isReadyToPay failed", exception)
       }
@@ -30,6 +32,7 @@ class GooglePayViewModel(application: Application) : AndroidViewModel(applicatio
 
     return true
   }
+
   fun getLoadPaymentDataTask(paymentDataRequestJson: JSONObject): Task<PaymentData> {
     val request = PaymentDataRequest.fromJson(paymentDataRequestJson.toString())
     return paymentsClient.loadPaymentData(request)

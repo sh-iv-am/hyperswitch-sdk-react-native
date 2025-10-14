@@ -28,10 +28,9 @@ class HyperswitchSdkReactNativePackage : BaseReactPackage() {
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
     return ReactModuleInfoProvider {
-      arrayOf(HyperswitchSdkReactNativeModule.NAME, HyperswitchSdkNativeModule.NAME)
-        .associateWith {
-          ReactModuleInfo(it, it, false, false, false, true)
-        }.toMutableMap()
+      arrayOf(HyperswitchSdkReactNativeModule.NAME, HyperswitchSdkNativeModule.NAME).associateWith {
+        ReactModuleInfo(it, it, false, false, false, true)
+      }.toMutableMap()
     }
   }
 }

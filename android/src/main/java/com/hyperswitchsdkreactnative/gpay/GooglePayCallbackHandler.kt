@@ -11,8 +11,7 @@ object GooglePayCallbackManager {
   fun setCallback(appContext: Context, request: String, newCallback: Callback) {
     callback = newCallback
     val myIntent = Intent(
-      appContext,
-      GooglePayActivity::class.java
+      appContext, GooglePayActivity::class.java
     )
     myIntent.putExtra("gPayRequest", request)
     myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

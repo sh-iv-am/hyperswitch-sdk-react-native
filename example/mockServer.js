@@ -99,85 +99,12 @@ app.get('/health', (req, res) => {
   });
 });
 
-let paymentDataDefault = {
-  amount: 15100,
-  currency: 'USD',
-  capture_method: 'automatic',
-  authentication_type: 'three_ds',
-  setup_future_usage: 'on_session',
-  request_external_three_ds_authentication: false,
-  email: 'user@gmail.com',
-  description: 'Hello this is description',
-  connector_metadata: {
-    noon: {
-      order_category: 'applepay',
-    },
-  },
-  metadata: {
-    udf1: 'value1',
-    new_customer: 'true',
-    login_date: '2019-09-10T10:11:12Z',
-  },
-  billing: {
-    address: {
-      line1: '1467',
-      line2: 'Harrison Street',
-      line3: 'Harrison Street',
-      city: 'San Fransico',
-      state: 'California',
-      zip: '94122',
-      country: 'US',
-      first_name: 'CL',
-      last_name: 'BRWA',
-    },
-    phone: {
-      number: '8056594427',
-      country_code: '+91',
-    },
-  },
-  customer_id: 'hyperswitch_sdk_demo_id_2345tdnj',
-};
-
 app.get('/create-payment-intent', async (req, res) => {
-  // Prepare payment intent data
-  const paymentData = {
-    ...paymentDataDefault,
-    ...req.body,
-  };
-
-  // Add customer_id if provided
-  if (process.env.PROFILE_ID) {
-    paymentData.profile_id = process.env.PROFILE_ID;
-  }
-
-  logger.debug('Creating payment intent with data', paymentData);
-
-  // Make API call to Hyperswitch
-  const response = await makeHyperswitchRequest('/payments', {
-    method: 'POST',
-    body: JSON.stringify(paymentData),
-  });
-
-  logger.debug('Payment intent created successfully', {
-    payment_id: response.data.payment_id,
-  });
-  // Return the payment intent data
-  res.json({
-    success: true,
-    // payment_intent: response.data,
-    clientSecret: response.data.client_secret,
-    client_secret: response.data.client_secret,
-    publishable_key: HYPERSWITCH_PUBLISHABLE_KEY,
-    publishableKey: HYPERSWITCH_PUBLISHABLE_KEY,
-  });
-});
-
-// Create Payment Intent
-app.post('/create-payment-intent', async (req, res) => {
   try {
     // Prepare payment intent data
     const paymentData = {
-      ...paymentDataDefault,
+      amount: 100,
+      currency: 'USD',
       ...req.body,
     };
 
@@ -199,12 +126,53 @@ app.post('/create-payment-intent', async (req, res) => {
     });
     // Return the payment intent data
     res.json({
-      success: true,
-      // payment_intent: response.data,
-      clientSecret: response.data.client_secret,
-      client_secret: response.data.client_secret,
-      publishable_key: HYPERSWITCH_PUBLISHABLE_KEY,
       publishableKey: HYPERSWITCH_PUBLISHABLE_KEY,
+      clientSecret: response.data.client_secret,
+    });
+  } catch (error) {
+    logger.error(
+      'Error creating payment intent',
+      error.response?.data || error.message
+    );
+
+    res.status(error.response?.status || 500).json({
+      error: 'Failed to create payment intent',
+      details: error.response?.data || error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
+// Create Payment Intent
+app.post('/create-payment-intent', async (req, res) => {
+  try {
+    // Prepare payment intent data
+    const paymentData = {
+      amount: 100,
+      currency: 'USD',
+      ...req.body,
+    };
+
+    // Add customer_id if provided
+    if (process.env.PROFILE_ID) {
+      paymentData.profile_id = process.env.PROFILE_ID;
+    }
+
+    logger.debug('Creating payment intent with data', paymentData);
+
+    // Make API call to Hyperswitch
+    const response = await makeHyperswitchRequest('/payments', {
+      method: 'POST',
+      body: JSON.stringify(paymentData),
+    });
+
+    logger.debug('Payment intent created successfully', {
+      payment_id: response.data.payment_id,
+    });
+    // Return the payment intent data
+    res.json({
+      publishableKey: HYPERSWITCH_PUBLISHABLE_KEY,
+      clientSecret: response.data.client_secret,
     });
   } catch (error) {
     logger.error(
@@ -243,13 +211,9 @@ app.use((req, res) => {
 app
   .listen(PORT, '0.0.0.0', () => {
     logger.info(`🚀 Hyperswitch server running on port ${PORT}`);
-    logger.info(`📋 iOS Health check: http://localhost:${PORT}/health`);
-    logger.info(`📋 Android Health check: http://10.0.2.2:${PORT}/health`);
+    logger.info(`📋 Health check: http://localhost:${PORT}/health`);
     logger.info(
-      `💳 iOS Create payment: POST http://localhost:${PORT}/create-payment-intent`
-    );
-    logger.info(
-      `💳 Android Create payment: POST http://10.0.2.2:${PORT}/create-payment-intent`
+      `💳 Create payment: POST http://localhost:${PORT}/create-payment-intent`
     );
     logger.info(`🌐 Environment: ${HYPERSWITCH_BASE_URL}`);
     logger.info(

@@ -91,7 +91,7 @@ internal class HyperProvider internal constructor(private val activity: Activity
     activity?.let {
       try {
         if (reactFragment != null) {
-          it.supportFragmentManager.beginTransaction().remove(reactFragment!!).commit()
+          it.supportFragmentManager.beginTransaction().remove(reactFragment!!).commitAllowingStateLoss()
         }
         if (reset) {
           reactFragment = null

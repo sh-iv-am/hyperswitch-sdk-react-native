@@ -17,6 +17,8 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     paddingHorizontal: 20,
     width: '100%',
+    backgroundColor: 'white',
+    // color: '',
   },
   button: {
     width: '100%',
@@ -36,12 +38,12 @@ export const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 24,
-    color: '#3e3e3e',
+    color: 'blue',
     textAlign: 'center',
   },
   messageText: {
     fontSize: 18,
-    color: '#5e5e5e',
+    color: 'blue',
     textAlign: 'center',
   },
 });

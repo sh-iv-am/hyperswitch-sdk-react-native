@@ -1,3 +1,5 @@
+// import PaymentWidget from './specs/PaymentWidget';
+
 export type { props as HyperProviderProps } from './context/HyperProvider.gen';
 export type {
   initPaymentSessionParams as InitPaymentSessionParams,
@@ -11,3 +13,4 @@ export {
   initHyperswitch,
 } from './context/HyperProvider.gen';
 export { useHyper } from './hooks/useHyper.gen';
+export { default as PaymentWidget } from './specs/PaymentWidget';

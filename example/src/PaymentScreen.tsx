@@ -21,7 +21,46 @@ export default function PaymentScreen() {
   const [baseURL, setBaseURL] = useState<string>(initialBaseUrl);
 
   const createPaymentIntent = useCallback(async (): Promise<string> => {
-    const response = await fetch(`${baseURL}/create-payment-intent`);
+     const response = await fetch(`${baseURL}/create-payment-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: 15100,
+        currency: 'USD',
+        authentication_type: 'no_three_ds',
+        customer_id: 'hyperswitch-customer-id',
+        capture_method: 'automatic',
+        email: 'abc@gmail.com',
+        billing: {
+          address: {
+            line1: '1467',
+            line2: 'Harrison Street',
+            line3: 'Harrison Street',
+            city: 'San Fransico',
+            state: 'California',
+            zip: '94122',
+            country: 'US',
+            first_name: 'joseph',
+            last_name: 'Doe',
+          },
+        },
+        shipping: {
+          address: {
+            line1: '1467',
+            line2: 'Harrison Street',
+            line3: 'Harrison Street',
+            city: 'San Fransico',
+            state: 'California',
+            zip: '94122',
+            country: 'US',
+            first_name: 'Joe',
+            last_name: 'DEF',
+          },
+        },
+      }),
+    });
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || 'Failed to create payment intent');

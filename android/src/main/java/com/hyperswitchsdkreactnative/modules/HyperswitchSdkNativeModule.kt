@@ -1,5 +1,6 @@
 package com.hyperswitchsdkreactnative.modules
 
+import android.util.Log
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactMethod
@@ -10,6 +11,8 @@ import com.hyperswitchsdkreactnative.NativeHyperswitchSdkNativeSpec
 import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule.Companion.resetView
 import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule.Companion.resolvePromise
 import com.hyperswitchsdkreactnative.gpay.GooglePayCallbackManager
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule.Companion.resolveBackPromise
+import org.json.JSONObject
 
 /**
  * HyperModules TurboModule implementation that bridges the bundle's expectations
@@ -22,10 +25,37 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
+  private var listenerCount = 0
+
+  init {
+    HyperEventEmitter.initialize(this.reactApplicationContext)
+  }
+
+  @ReactMethod
+  fun addListener(eventName: String?) {
+    if (listenerCount == 0) {
+      HyperEventEmitter.initialize(this.reactApplicationContext)
+    }
+    listenerCount += 1
+  }
+
+  @ReactMethod
+  fun removeListeners(count: Int) {
+    listenerCount -= count
+    if (listenerCount == 0) {
+      // Remove upstream listeners, stop unnecessary background task
+    }
+  }
+
   @ReactMethod
   override fun sendMessageToNative(message: String) {
-//    Log.d(NAME, "sendMessageToNative called with: $message")
-    // Forward to HyperswitchSdkModule if needed
+    Log.d(NAME, "sendMessageToNative called with: $message")
+//    val jsonObject = JSONObject(message)
+//    Log.i("NativeEventReceived", jsonObject.toString())
+//    if (jsonObject.optString("eventName", "event") == "BACK_BUTTON_RES") {
+////        resolveBackPromise(jsonObject.getJSONObject("data").optBoolean("shouldBackPress"))
+//    }
+
   }
 
   @ReactMethod
@@ -35,6 +65,10 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
     callback.invoke("Apple Pay not implemented")
   }
 
+  override fun invalidate() {
+    super.invalidate()
+    HyperEventEmitter.deinitialize()
+  }
 
   @ReactMethod
   override fun launchGPay(requestObj: String, callback: Callback) {
@@ -81,23 +115,32 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
   override fun exitWidget(result: String, widgetType: String) {
 //    Log.d(NAME, "exitWidget called with result: $result, widgetType: $widgetType")
     resolvePromise(result)
-
     // Implementation for exiting widget
   }
 
   @ReactMethod
   override fun exitCardForm(result: String) {
 //    Log.d(NAME, "exitCardForm called with result: $result")
-    resolvePromise(result)
-
+//    try {
+//      resetView()
+//      resolvePromise(result)
+//    } catch (e: JSONException) {
+//      // Log.e(NAME, "Failed to parse JSON result: $result", e)
+//      resolvePromise(result)
+//    }
     // Implementation for exiting card form
   }
 
   @ReactMethod
   override fun exitWidgetPaymentsheet(rootTag: Double, result: String, reset: Boolean) {
 //    Log.d(NAME, "exitWidgetPaymentsheet called")
-    resolvePromise(result)
-
+//    try {
+////      resetView()
+//      resolvePromise(result)
+//    } catch (e: JSONException) {
+//      // Log.e(NAME, "Failed to parse JSON result: $result", e)
+//      resolvePromise(result)
+//    }
     // Implementation for exiting widget payment sheet
   }
 
@@ -138,5 +181,19 @@ class HyperswitchSdkNativeModule(reactContext: ReactApplicationContext) :
 
   companion object {
     const val NAME = "HyperModules"
+
+    fun handleBackPressFromRN() {
+      val eventData = mutableMapOf<String, String?>(
+        "message" to "handleBackPress is called in js side from native"
+      )
+      HyperEventEmitter.confirmStatic("handleBackPress", eventData)
+    }
+
+    fun handlePaymentFromRN(){
+      val eventData = mutableMapOf<String, String?>(
+        "message" to "confirmPayment is called in js side from native"
+      )
+      HyperEventEmitter.confirmStatic("confirmPayment", eventData)
+    }
   }
 }

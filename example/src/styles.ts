@@ -46,4 +46,14 @@ export const styles = StyleSheet.create({
     color: 'blue',
     textAlign: 'center',
   },
+  closeButton: {
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    padding: 8,
+    marginBottom: 16,
+  },
+  closeButtonText: {
+    fontSize: 32,
+    color: 'white',
+  },
 });

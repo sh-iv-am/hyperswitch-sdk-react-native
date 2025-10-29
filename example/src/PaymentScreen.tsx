@@ -14,14 +14,20 @@ import {
 } from './utils';
 import { styles } from './styles';
 
-export default function PaymentScreen() {
+export default function PaymentScreen({
+  setPage,
+  page,
+}: {
+  setPage: React.Dispatch<React.SetStateAction<'payment' | 'widget'>>;
+  page: 'payment' | 'widget';
+}) {
   const { initPaymentSession, presentPaymentSheet } = useHyper();
   const [status, setStatus] = useState<string | null | undefined>(null);
   const [message, setMessage] = useState<string | null | undefined>(null);
   const [baseURL, setBaseURL] = useState<string>(initialBaseUrl);
 
   const createPaymentIntent = useCallback(async (): Promise<string> => {
-     const response = await fetch(`${baseURL}/create-payment-intent`, {
+    const response = await fetch(`${baseURL}/create-payment-intent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -136,6 +142,14 @@ export default function PaymentScreen() {
         <Text style={styles.statusText}>{status}</Text>
         {message && <Text style={styles.messageText}>{message}</Text>}
       </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setPage(page === 'payment' ? 'widget' : 'payment')}
+      >
+        <Text style={styles.buttonText}>
+          {page === 'payment' ? 'Open Widget' : 'Back to Payment'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

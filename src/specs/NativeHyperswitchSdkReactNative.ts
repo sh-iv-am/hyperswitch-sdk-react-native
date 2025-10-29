@@ -10,6 +10,8 @@ export interface Spec extends TurboModule {
   ): Promise<void>;
   initPaymentSession(paymentIntentClientSecret: string): Promise<string>;
   presentPaymentSheet(configuration: Object): Promise<string>;
+  handleBackPress(widgetId: string): Promise<boolean>;
+  confirmPayment(widgetId: string): Promise<string>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(

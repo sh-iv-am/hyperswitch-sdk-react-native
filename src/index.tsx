@@ -6,6 +6,7 @@ export type {
   initPaymentSessionResult as InitPaymentSessionResult,
   presentPaymentSheetParams as PresentPaymentSheetParams,
   presentPaymentSheetResult as PresentPaymentSheetResult,
+  widgetHandle as PaymentWidgetHandle,
 } from './modules/NativeHyperswitchSdk.gen';
 
 export {
@@ -13,4 +14,4 @@ export {
   initHyperswitch,
 } from './context/HyperProvider.gen';
 export { useHyper } from './hooks/useHyper.gen';
-export { default as PaymentWidget } from './specs/PaymentWidget';
+export { make as PaymentWidget } from './components/HyperswitchPaymentWidget.res';

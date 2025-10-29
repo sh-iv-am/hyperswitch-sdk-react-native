@@ -22,11 +22,6 @@ import org.json.JSONArray
 
 internal class HyperProvider internal constructor(private val activity: Activity) {
 
-  private var customBackendUrl: String? = null
-  private var customLogUrl: String? = null
-  private var customParams: ReadableMap? = null
-  private var clientSecret: String? = null
-
 
   fun initialise(
     publishableKey: String?,
@@ -35,9 +30,9 @@ internal class HyperProvider internal constructor(private val activity: Activity
     customParams: ReadableMap?
   ) {
     Companion.publishableKey = publishableKey
-    this.customBackendUrl = customBackendUrl
-    this.customLogUrl = customLogUrl
-    this.customParams = customParams
+    Companion.customBackendUrl = customBackendUrl
+    Companion.customLogUrl = customLogUrl
+    Companion.customParams = customParams
     try {
       ReactFragment.initOTAServices(context = activity)
     } catch (_: Exception) {
@@ -45,36 +40,21 @@ internal class HyperProvider internal constructor(private val activity: Activity
   }
 
   fun initPaymentSession(clientSecret: String) {
-    this.clientSecret = clientSecret
+    Companion.clientSecret = clientSecret
   }
-
 
   fun presentPaymentSheet(readableMap: ReadableMap) {
     val activity = activity as? FragmentActivity
     removeSheetView(true) // remove any existing payment sheet
     activity?.let {
-      val propsBundle = Bundle().apply {
-        putString("type", "payment")
-        putString("from", "rn")
-        putString("publishableKey", publishableKey ?: "")
-        putString("clientSecret", clientSecret ?: "")
-        putBundle("configuration", readableMapToBundle(readableMap))
-        putBundle("hyperParams", getHyperParams(activity, readableMapToBundle(readableMap)))
-        customBackendUrl?.let { url -> putString("customBackendUrl", url) }
-        customLogUrl?.let { url -> putString("customLogUrl", url) }
-        customParams?.let { params ->
-          putString(
-            "customParams", readableMapToJSON(params).toString()
-          )
-        }
-      }
 
-      val bundle = Bundle().apply {
-        putBundle("props", propsBundle)
-      }
 
       reactFragment =
-        ReactFragment.Builder().setComponentName("hyperSwitch").setLaunchOptions(bundle).build()
+        ReactFragment.Builder()
+          .setComponentName("hyperSwitch")
+          .setLaunchOptions(
+            getLaunchOptions(activity, readableMap)
+          ).build()
 
       val fragmentManager: FragmentManager = it.supportFragmentManager
       val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
@@ -91,7 +71,8 @@ internal class HyperProvider internal constructor(private val activity: Activity
     activity?.let {
       try {
         if (reactFragment != null) {
-          it.supportFragmentManager.beginTransaction().remove(reactFragment!!).commitAllowingStateLoss()
+          it.supportFragmentManager.beginTransaction().remove(reactFragment!!)
+            .commitAllowingStateLoss()
         }
         if (reset) {
           reactFragment = null
@@ -108,8 +89,43 @@ internal class HyperProvider internal constructor(private val activity: Activity
     @JvmStatic
     private var publishableKey: String? = null
 
+    @JvmStatic
+    private var clientSecret: String? = null
+
+    @JvmStatic
+    private var customBackendUrl: String? = null
+
+    @JvmStatic
+    private var customLogUrl: String? = null
+
+    @JvmStatic
+    private var customParams: ReadableMap? = null
+
+
     fun publishableKey(): String {
       return publishableKey ?: ""
+    }
+
+    fun getLaunchOptions(activity: Activity, configuration: ReadableMap, type : String = "payment"): Bundle {
+      val propsBundle = Bundle().apply {
+        putString("type", type)
+        putString("from", "rn")
+        putString("publishableKey", publishableKey ?: "")
+        putString("clientSecret", clientSecret ?: "")
+        putBundle("configuration", readableMapToBundle(configuration))
+        putBundle("hyperParams", getHyperParams(activity, readableMapToBundle(configuration)))
+        customBackendUrl?.let { url -> putString("customBackendUrl", url) }
+        customLogUrl?.let { url -> putString("customLogUrl", url) }
+        customParams?.let { params ->
+          putString(
+            "customParams", readableMapToJSON(params).toString()
+          )
+        }
+      }
+      val bundle = Bundle().apply {
+        putBundle("props", propsBundle)
+      }
+      return bundle
     }
 
     fun readableMapToJSON(readableMap: ReadableMap?): JSONObject {

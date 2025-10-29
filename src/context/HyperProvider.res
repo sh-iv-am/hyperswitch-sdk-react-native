@@ -63,12 +63,12 @@ let make = (
     }
   }
 
-  React.useEffect1(() => {
+  React.useEffect2(() => {
     if (publishableKey != "") {
       initialise()->ignore
     }
     None
-  }, [publishableKey])
+  }, (publishableKey, initialise))
 
   let setState = React.useCallback1(val => {
     setState(_ => val)

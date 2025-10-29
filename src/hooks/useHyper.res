@@ -110,10 +110,7 @@ let _presentPaymentSheet = async (params: presentPaymentSheetParams): presentPay
   }
 }
 
-type useHyper = {
-  initPaymentSession: initPaymentSessionParams => promise<initPaymentSessionResult>,
-  presentPaymentSheet: presentPaymentSheetParams => promise<presentPaymentSheetResult>,
-}
+
 
 @genType
 let useHyper = () => {
@@ -135,8 +132,21 @@ let useHyper = () => {
     }
   }, [isReady])
 
+  let isPaymentReady = false
+  let paymentMethods = "data"
+  let handleBackPress = async (widgetId: string) =>
+    await nativeHyperswitchSdk.handleBackPress(~widgetId)
+
+  let confirmPayment = async (widgetId: string) => {
+    await nativeHyperswitchSdk.confirmPayment(~widgetId)
+  }
+
   {
     initPaymentSession,
+    isPaymentReady,
+    paymentMethods,
+    handleBackPress,
+    confirmPayment,
     presentPaymentSheet,
   }
 }

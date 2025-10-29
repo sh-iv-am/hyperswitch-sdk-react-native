@@ -1,15 +1,14 @@
 package com.hyperswitchsdkreactnative.modules
 
 
-import android.R.attr.id
-import androidx.fragment.app.FragmentActivity
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import com.hyperswitchsdkreactnative.NativeHyperswitchSdkReactNativeSpec
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkNativeModule.Companion.handleBackPressFromRN
+import com.hyperswitchsdkreactnative.modules.HyperswitchSdkNativeModule.Companion.handlePaymentFromRN
 import com.hyperswitchsdkreactnative.provider.HyperProvider
-import io.hyperswitch.react.Utils
 
 @ReactModule(name = HyperswitchSdkReactNativeModule.NAME)
 class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
@@ -69,6 +68,22 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  override fun handleBackPress(
+    widgetId: String?,
+    promise: Promise?
+  ) {
+    widgetBackPromise = promise
+    handleBackPressFromRN()
+  }
+
+  override fun confirmPayment(
+    widgetId: String?,
+    promise: Promise?
+  ) {
+    widgetPayNowPromise = promise
+    handlePaymentFromRN()
+  }
+
   fun resetView() {
     hyperProvider?.removeSheetView(true)
   }
@@ -77,6 +92,15 @@ class HyperswitchSdkReactNativeModule(reactContext: ReactApplicationContext) :
     const val NAME = "HyperswitchSdkReactNative"
     private var sheetPromise: Promise? = null
     private var currentInstance: HyperswitchSdkReactNativeModule? = null
+    private var widgetBackPromise: Promise? = null
+    private var widgetPayNowPromise: Promise? = null
+
+    fun resolveBackPromise(data: Any?){
+      try{
+        widgetBackPromise?.resolve(data)
+      }catch (_: Exception){}
+    }
+
 
     fun resolvePromise(data: Any?) {
       try {

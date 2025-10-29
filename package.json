@@ -1,5 +1,5 @@
 {
-  "name": "hyperswitch-sdk-react-native",
+  "name": "@juspay-tech/hyperswitch-sdk-react-native",
   "version": "0.1.0",
   "description": "Hyperswitch SDK for React Native",
   "main": "./lib/module/index.js",

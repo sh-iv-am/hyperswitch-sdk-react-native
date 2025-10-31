@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "hyperswitch-sdk-react-native": ["./src/index"]
+      "@juspay-tech/hyperswitch-sdk-react-native": ["./src/index"]
     },
     "allowImportingTsExtensions": true,
     "allowJs": true,

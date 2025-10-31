@@ -1,13 +1,13 @@
 # Hyperswitch SDK React Native Integration Guide
 
-The `hyperswitch-sdk-react-native` provides a seamless way to integrate Hyperswitch payments into your React Native applications. This guide covers installation, configuration, and implementation.
+The `@juspay-tech/hyperswitch-sdk-react-native` provides a seamless way to integrate Hyperswitch payments into your React Native applications. This guide covers installation, configuration, and implementation.
 
 ## Installation
 
 ```bash
-npm install hyperswitch-sdk-react-native
+npm install @juspay-tech/hyperswitch-sdk-react-native
 # or
-yarn add hyperswitch-sdk-react-native
+yarn add @juspay-tech/hyperswitch-sdk-react-native
 ```
 
 ### Additional Dependencies
@@ -40,13 +40,13 @@ This will generate all the necessary files which are required for react native n
 ### 1. Wrap Your App with HyperProvider
 
 ```tsx
-import { HyperProvider } from 'hyperswitch-sdk-react-native';
+import { HyperProvider } from '@juspay-tech/hyperswitch-sdk-react-native';
 
 import {
   useHyper,
   type InitPaymentSessionParams,
   type InitPaymentSessionResult,
-} from 'hyperswitch-sdk-react-native';
+} from '@juspay-tech/hyperswitch-sdk-react-native';
 
 export default function App() {
   const { initPaymentSession, presentPaymentSheet } = useHyper();
@@ -93,7 +93,7 @@ import {
   useHyper,
   type PresentPaymentSheetParams,
   type PresentPaymentSheetResult,
-} from 'hyperswitch-sdk-react-native';
+} from '@juspay-tech/hyperswitch-sdk-react-native';
 
 export default function PaymentScreen() {
   const { presentPaymentSheet } = useHyper();

@@ -5,7 +5,7 @@ import {
   type InitPaymentSessionParams,
   type InitPaymentSessionResult,
   type PresentPaymentSheetResult,
-} from 'hyperswitch-sdk-react-native';
+} from '@juspay-tech/hyperswitch-sdk-react-native';
 import {
   initialBaseUrl,
   getCustomisationOptions,

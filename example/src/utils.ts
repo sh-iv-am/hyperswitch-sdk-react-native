@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { type PresentPaymentSheetParams } from 'hyperswitch-sdk-react-native';
+import { type PresentPaymentSheetParams } from '@juspay-tech/hyperswitch-sdk-react-native';
 
 export const initialBaseUrl =
   Platform.OS === 'android' ? 'http://10.0.2.2:5252' : 'http://localhost:5252';

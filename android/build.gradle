@@ -88,16 +88,12 @@ android {
     pickFirst '**/libreactnativejni.so'
   }
 }
-rootProject.repositories {
-  mavenCentral()
-  google()
-  maven { url "https://maven.juspay.in/hyper-sdk/" }
-}
-
-repositories {
-  mavenCentral()
-  google()
-  maven { url "https://maven.juspay.in/hyper-sdk/" }
+rootProject.allprojects {
+  repositories {
+    mavenCentral()
+    google()
+    maven { url "https://maven.juspay.in/hyper-sdk/" }
+  }
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")

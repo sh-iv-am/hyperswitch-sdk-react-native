@@ -36,13 +36,14 @@
     "re:format": "rescript format -all",
     "re:build": "rescript",
     "re:clean": "rescript clean",
-    "example": "yarn workspace hyperswitch-sdk-react-native-example",
+    "example": "yarn workspace @juspay-tech/hyperswitch-sdk-react-native-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{tsx,res}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "npm run re:build && bob build",
-    "release": "release-it --only-version"
+    "release": "release-it --only-version",
+    "postinstall": "npm run re:build"
   },
   "keywords": [
     "react-native",
@@ -93,7 +94,9 @@
   "peerDependencies": {
     "@sentry/react-native": "*",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-inappbrowser-reborn": "*",
+    "react-native-svg": "*"
   },
   "dependencies": {
     "@rescript/core": "^1.6.1",

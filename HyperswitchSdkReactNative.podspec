@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => min_ios_version_supported }
-  s.source       = { :git => "https://github.com/juspay/hyperswitch-sdk-react-native.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/juspay/@juspay-tech/hyperswitch-sdk-react-native.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,cpp,swift}"
   s.private_header_files = "ios/**/*.h"

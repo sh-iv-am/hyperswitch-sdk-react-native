@@ -1,3 +1,4 @@
+
 type initialise = (
   ~publishableKey: string,
   ~customBackendUrl: string=?,
@@ -17,18 +18,32 @@ type initPaymentSessionResult = {error?: string}
 type presentPaymentSheetParams = PaymentSheetConfiguration.options
 
 type status =
-  | @as("Completed") Completed
-  | @as("Canceled") Canceled
+  | @as("succeeded") Completed
+  | @as("cancelled") Canceled
   | @as("Failed") Failed
 
-type presentPaymentSheetResult = {
-  status: status,
+@genType
+type paymentResult = {
+  status: string,
   message: string,
   error?: string,
+  \"type"?: string,
 }
 
 @genType
-type presentPaymentSheet = presentPaymentSheetParams => promise<presentPaymentSheetResult>
+type error = {
+  code?: string,
+  message?: string
+}
+
+@genType
+type presentPaymentSheetResult = {
+  error?: error,
+  paymentResult?: paymentResult
+}
+
+@genType
+type presentPaymentSheet = presentPaymentSheetParams => promise<string>
 
 type nativeHyperswitchSdk = {
   initialise: initialise,

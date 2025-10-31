@@ -1,80 +1,53 @@
 #import "HyperswitchSdkReactNative.h"
-#import "HyperProvider.h"
 
-@interface HyperswitchSdkReactNative ()
-@property (nonatomic, strong, nullable) HyperProvider *hyperProvider;
-@end
+#if __has_include("HyperswitchSdkReactNative-Swift.h")
+#import "HyperswitchSdkReactNative-Swift.h"
+#else
+// When using use_frameworks! :linkage => :static in Podfile
+#import <HyperswitchSdkReactNative/HyperswitchSdkReactNative-Swift.h>
+#endif
+
 
 @implementation HyperswitchSdkReactNative
 RCT_EXPORT_MODULE()
 
-- (void)initialise:(NSString *)publishableKey
-  customBackendUrl:(nullable NSString *)customBackendUrl
-     customLogUrl:(nullable NSString *)customLogUrl
-     customParams:(nullable NSDictionary *)customParams
-          resolve:(RCTPromiseResolveBlock)resolve
-           reject:(RCTPromiseRejectBlock)reject {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-        
-        if (rootViewController) {
-            self.hyperProvider = [[HyperProvider alloc] initWithViewController:rootViewController];
-            [self.hyperProvider initialiseWithPublishableKey:publishableKey
-                                             customBackendUrl:customBackendUrl
-                                                customLogUrl:customLogUrl
-                                                customParams:customParams];
-            resolve([NSNull null]);
-        } else {
-            reject(@"INITIALIZATION_ERROR", @"Root view controller is nil", nil);
-        }
-    });
+//- (instancetype)init
+//{
+//  self = [super init];
+//  if (self) {
+//    StripeSdkImpl.shared.emitter = self;
+//  }
+//  return self;
+//}
+
+RCT_EXPORT_METHOD(initialise:(nonnull NSString *)publishableKey
+                  customBackendUrl:(nullable NSString *)customBackendUrl
+                  customLogUrl:(nullable NSString *)customLogUrl
+                  customParams:(nullable NSDictionary *)customParams
+                  resolve:(nonnull RCTPromiseResolveBlock)resolve
+                  reject:(nonnull RCTPromiseRejectBlock)reject) {
+  [HyperswitchModule.shared initialiseWithPublishableKey:publishableKey customBackendUrl:customBackendUrl customLogUrl:customLogUrl customParams:customParams resolve:resolve reject:reject];
 }
 
-- (void)initPaymentSession:(NSString *)paymentIntentClientSecret
-                   resolve:(RCTPromiseResolveBlock)resolve
-                    reject:(RCTPromiseRejectBlock)reject {
-    
-    if (self.hyperProvider) {
-        [self.hyperProvider initPaymentSessionWithClientSecret:paymentIntentClientSecret];
-        resolve([NSNull null]);
-    } else {
-        reject(@"INIT_ERROR", @"HyperProvider not initialized", nil);
-    }
+RCT_EXPORT_METHOD(initPaymentSession:(nonnull NSString *)paymentIntentClientSecret
+                  resolve:(nonnull RCTPromiseResolveBlock)resolve
+                  reject:(nonnull RCTPromiseRejectBlock)reject) {
+  
+  [HyperswitchModule.shared initPaymentSessionWithpaymentIntentClientSecret:paymentIntentClientSecret resolve:resolve reject:reject];
 }
 
-- (void)presentPaymentSheet:(NSDictionary *)configuration
-                    resolve:(RCTPromiseResolveBlock)resolve
-                     reject:(RCTPromiseRejectBlock)reject {
-    
-    if (self.hyperProvider) {
-        [self.hyperProvider presentPaymentSheetWithConfiguration:configuration
-                                                         callback:^(PaymentResult *result) {
-            if ([result.status isEqualToString:@"completed"]) {
-                NSDictionary *resultDict = @{
-                    @"status": result.status,
-                    @"message": result.message
-                };
-                resolve(resultDict);
-            } else if ([result.status isEqualToString:@"canceled"]) {
-                NSDictionary *resultDict = @{
-                    @"status": result.status,
-                    @"message": @"canceled"
-                };
-                resolve(resultDict);
-            } else {
-                reject(@"PAYMENT_ERROR", result.message, nil);
-            }
-        }];
-    } else {
-        reject(@"PRESENT_ERROR", @"HyperProvider not initialized", nil);
-    }
+RCT_EXPORT_METHOD(presentPaymentSheet:(nonnull NSDictionary *)configuration
+                  resolve:(nonnull RCTPromiseResolveBlock)resolve
+                  reject:(nonnull RCTPromiseRejectBlock)reject)
+{
+  [HyperswitchModule.shared presentPaymentSheetWithConfiguration:configuration resolver:resolve rejecter:reject];
 }
+
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+(const facebook::react::ObjCTurboModule::InitParams &)params
 {
-    return std::make_shared<facebook::react::NativeHyperswitchSdkReactNativeSpecJSI>(params);
+  return std::make_shared<facebook::react::NativeHyperswitchSdkReactNativeSpecJSI>(params);
 }
 
 @end

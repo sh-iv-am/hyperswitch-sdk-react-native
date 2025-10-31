@@ -8,7 +8,6 @@ import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
 import com.hyperswitchsdkreactnative.modules.HyperswitchSdkNativeModule
 import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeModule
-import com.hyperswitchsdkreactnative.modules.HyperswitchSdkReactNativeViewManager
 import com.hyperswitchsdkreactnative.views.GooglePayButtonViewManager
 import java.util.ArrayList
 
@@ -23,17 +22,15 @@ class HyperswitchSdkReactNativePackage : BaseReactPackage() {
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
-    viewManagers.add(HyperswitchSdkReactNativeViewManager())
     viewManagers.add(GooglePayButtonViewManager())
     return viewManagers
   }
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
     return ReactModuleInfoProvider {
-      arrayOf(HyperswitchSdkReactNativeModule.NAME, HyperswitchSdkNativeModule.NAME)
-        .associateWith {
-          ReactModuleInfo(it, it, false, false, false, true)
-        }.toMutableMap()
+      arrayOf(HyperswitchSdkReactNativeModule.NAME, HyperswitchSdkNativeModule.NAME).associateWith {
+        ReactModuleInfo(it, it, false, false, false, true)
+      }.toMutableMap()
     }
   }
 }

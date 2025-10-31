@@ -12,7 +12,8 @@ import java.math.BigInteger
 @ReactModule(name = GooglePayButtonViewManager.NAME)
 class GooglePayButtonViewManager : SimpleViewManager<GooglePayButtonView>(),
   GooglePayButtonManagerInterface<GooglePayButtonView> {
-  private val mDelegate: ViewManagerDelegate<GooglePayButtonView> = GooglePayButtonManagerDelegate(this)
+  private val mDelegate: ViewManagerDelegate<GooglePayButtonView> =
+    GooglePayButtonManagerDelegate(this)
 
   override fun getDelegate(): ViewManagerDelegate<GooglePayButtonView> {
     return mDelegate
@@ -32,8 +33,7 @@ class GooglePayButtonViewManager : SimpleViewManager<GooglePayButtonView>(),
   }
 
   override fun setButtonType(
-    view: GooglePayButtonView?,
-    value: String?
+    view: GooglePayButtonView?, value: String?
   ) {
     view?.type = when (value) {
       "BUY" -> ButtonConstants.ButtonType.BUY
@@ -48,8 +48,7 @@ class GooglePayButtonViewManager : SimpleViewManager<GooglePayButtonView>(),
   }
 
   override fun setButtonStyle(
-    view: GooglePayButtonView?,
-    value: String?
+    view: GooglePayButtonView?, value: String?
   ) {
     view?.theme = when (value) {
       "light" -> ButtonConstants.ButtonTheme.LIGHT
@@ -58,15 +57,13 @@ class GooglePayButtonViewManager : SimpleViewManager<GooglePayButtonView>(),
   }
 
   override fun setBorderRadius(
-    view: GooglePayButtonView?,
-    value: Double
+    view: GooglePayButtonView?, value: Double
   ) {
     view?.cornerRadius = value.toInt()
   }
 
   override fun setAllowedPaymentMethods(
-    view: GooglePayButtonView?,
-    value: String?
+    view: GooglePayButtonView?, value: String?
   ) {
     if (value != null) {
       view?.allowedPaymentMethods = value

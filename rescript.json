@@ -1,5 +1,5 @@
 {
-  "name": "hyperswitch-sdk-react-native",
+  "name": "@juspay-tech/hyperswitch-sdk-react-native",
   "namespace": true,
   "jsx": {"version": 4},
   "package-specs": {

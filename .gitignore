@@ -9,6 +9,9 @@
 .vscode/
 jsconfig.json
 
+
+react-native-debug/*
+
 # Xcode
 #
 build/
@@ -90,3 +93,6 @@ nitrogen/
 .bsb.lock
 *.res.js
 *.gen.tsx
+
+
+lib/**

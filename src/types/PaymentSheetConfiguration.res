@@ -35,7 +35,7 @@ type fontFamilyTypes = DefaultIOS | DefaultAndroid | CustomFont(string) | Defaul
 type placeholder = {
   cardNumber?: string,
   expiryDate?: string,
-  cvv?: string
+  cvv?: string,
 }
 
 type address = {
@@ -81,10 +81,10 @@ type colors = {
   loaderForeground?: string,
 }
 
-type defaultColors = {light?: colors, dark?: colors}
-type colorType =
-  | Colors(colors)
-  | DefaultColors(defaultColors)
+type colorType = {
+  light?: colors,
+  dark?: colors,
+}
 
 // IOS Specific
 type offsetType = {
@@ -123,9 +123,10 @@ type primaryButtonColor = {
   text?: string,
   border?: string,
 }
-type primaryButtonColorType =
-  | PrimaryButtonColor(option<primaryButtonColor>)
-  | PrimaryButtonDefault({light?: primaryButtonColor, dark?: primaryButtonColor})
+type primaryButtonColorType = {
+  light?: primaryButtonColor, 
+  dark?: primaryButtonColor
+}
 
 type primaryButton = {
   shapes?: shapes,
@@ -168,12 +169,14 @@ type applePayConfiguration = {
   buttonStyle?: applePayThemeBaseStyle,
 }
 
-type themeType = 
-    | Default 
-    | Light 
-    | Dark 
-    | Minimal 
-    | FlatMinimal
+type themeType =
+  | Default
+  | Light
+  | Dark
+  | Minimal
+  | FlatMinimal
+
+type layoutType = [#tabs | #accordion | #spacedAccordion]
 
 type appearance = {
   locale?: localeTypes,
@@ -184,6 +187,7 @@ type appearance = {
   googlePay?: googlePayConfiguration,
   applePay?: applePayConfiguration,
   theme?: themeType,
+  layout?: layoutType,
 }
 
 @genType

@@ -1,5 +1,5 @@
 {
-  "name": "hyperswitch-sdk-react-native",
+  "name": "@juspay-tech/hyperswitch-sdk-react-native",
   "version": "0.1.0",
   "description": "Hyperswitch SDK for React Native",
   "main": "./lib/module/index.js",
@@ -36,13 +36,14 @@
     "re:format": "rescript format -all",
     "re:build": "rescript",
     "re:clean": "rescript clean",
-    "example": "yarn workspace hyperswitch-sdk-react-native-example",
+    "example": "yarn workspace @juspay-tech/hyperswitch-sdk-react-native-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{tsx,res}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "bob build",
-    "release": "release-it --only-version"
+    "prepare": "npm run re:build && bob build",
+    "release": "release-it --only-version",
+    "postinstall": "npm run re:build"
   },
   "keywords": [
     "react-native",
@@ -72,8 +73,6 @@
     "@react-native/babel-preset": "0.79.2",
     "@react-native/eslint-config": "^0.78.0",
     "@release-it/conventional-changelog": "^9.0.2",
-    "@rescript/core": "^1.6.1",
-    "@rescript/react": "^0.14.0",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.8",
@@ -88,7 +87,6 @@
     "react-native": "0.79.2",
     "react-native-builder-bob": "^0.40.8",
     "release-it": "^17.10.0",
-    "rescript": "11",
     "rescript-react-native": "^0.78.0",
     "turbo": "^1.10.7",
     "typescript": "^5.8.3"
@@ -99,6 +97,11 @@
     "react-native": "*",
     "react-native-inappbrowser-reborn": "*",
     "react-native-svg": "*"
+  },
+  "dependencies": {
+    "@rescript/core": "^1.6.1",
+    "@rescript/react": "^0.14.0",
+    "rescript": "11"
   },
   "workspaces": [
     "example"
@@ -169,7 +172,6 @@
     },
     "ios": {
       "componentProvider": {
-        "HyperswitchSdkReactNativeView": "HyperswitchSdkReactNativeView",
         "ApplePayView": "ApplePayView"
       }
     }
